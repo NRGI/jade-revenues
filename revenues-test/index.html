@@ -40,6 +40,11 @@
         stroke-opacity: .2;
       }
       
+      .bignum {
+        display: inline-block;
+        font: 18px sans-serif;
+      }
+      
       .tooltip  {
         position: absolute;
         stroke: #444;
@@ -111,6 +116,17 @@
           .draw(json);
         
         
+        chart.data.nodes.map(function (d) {
+          console.log(d);
+          d.inTotal = d.targetLinks
+            .map(function (data) {return data.value;})
+            .reduce(function (total, val) {return total + val;},0);
+          d.outTotal = d.sourceLinks
+            .map(function (data) {return data.value;})
+            .reduce(function (total, val) {return total + val;},0);
+        })
+        
+        
         function label(node) {
           return node.name; //.replace(/\s*\(.*?\)$/, '');
         }
@@ -136,8 +152,10 @@
           var content;
       
 
-          content = "<p> " + node.name + " </br>";
-          content += d3.format(",.0f")(node.value) + " Kyats </br>";
+          content = "<p> " + node.name + " </p>";
+//          content += d3.format(",.0f")(node.value) + " Kyats </br>";
+          if (node.inTotal) content += "Inflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.inTotal/1000000) + "</div> million Kyats </br>";
+          if (node.outTotal) content += "Outflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.outTotal/1000000) + "</div> million Kyats </br>";
 //          content += "(US$ " + d3.format(",.0f")(node.value_reported_as_USD) + ") </p>";
 //          content += "<h3>" + d.data.Cause_en + " </br>";
 //          content += d.data.Cause_mm_uni_rev_orig + "</h3>";
@@ -193,13 +211,13 @@
           var content;
       
 
-          content = "<p> " + link.target.name + " payments to " + link.source.name + " </p>";
-          content += d3.format(",.0f")(link.value) + " Kyats </p>";
+          content = "<p> From: " + link.source.name + " </br>To: " + link.target.name + "</p>";
+          content += "<div class='bignum'>" + d3.format(",.0f")(link.value/1000000) + "</div> million Kyats </br>";
 //          content += "(US$ " + d3.format(",.0f")(link.value_reported_as_USD) + ") </p>";
-          content += d3.format(".2%")(link.value/link.target.value) 
-            + " of " +link.target.name+ " </p>";
-          content += d3.format(".2%")(link.value/link.source.value) 
-            + " of " +link.source.name+ " </p>";
+          content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.source.outTotal) 
+            + "</div> of revenue flowing from </br>" +link.source.name+ " </br>";
+          content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.target.inTotal) 
+            + "</div> of revenue flowing to </br> " +link.target.name+ " </br>";
 //          content += "<h3>" + d.data.Cause_en + " </br>";
 //          content += d.data.Cause_mm_uni_rev_orig + "</h3>";
 //
