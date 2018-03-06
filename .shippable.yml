@@ -7,7 +7,6 @@ branches:
   only:
     - staging
     - master
-    - 2-configure-build-pipeline
 
 env:
   global:
