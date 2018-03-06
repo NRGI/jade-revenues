@@ -31,6 +31,8 @@ build:
     - docker push nrgi/jade-revenues:$BRANCH
     - docker push nrgi/jade-revenues:$BRANCH.$COMMIT
 
+    # Trigger deploy through building a repo with deploy configuration
+    - ./shippable-deploy.sh
 integrations:
   hub:
     - integrationName: nrgiDockerHub
