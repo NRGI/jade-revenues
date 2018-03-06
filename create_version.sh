@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cat > public/version.txt << EOF
+cat > revenues-test/version.txt << EOF
 {
   "commit_sha": "$COMMIT",
   "image": "nrgi/rgi-api:$BRANCH.$COMMIT"
