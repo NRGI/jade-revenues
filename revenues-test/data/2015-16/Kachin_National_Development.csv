@@ -1,0 +1,39 @@
+,N,Description of Payment,Description of Payment,Per Company.Original,Per Company.Adjust,Per Company.Final,Per Company.Final,Per Government.Original,Per Government.Adjust,Per Government.Final,Per Government.Final,Final difference.Final
+2,Payments in Kind,,,0,0,0,,0,0,0,,0
+3,"Ministry of Natural Resources and Environmental Conservation (MONREC)
+Department of Mines
+MGE",,,0,0,0,,0,0,0,,0
+4,1,Production Split (Government and SOEs share),,,0,0,,,0,0,,0
+5,Payments in Cash,,,4548338160.92,0,4548338160.92,,7322220103.0199995,-1817927696.9,5504292406.12,,-955954245.2000002
+6,"Ministry of Natural Resources and Environmental Conservation (MONREC)
+Myanmar Gems Enterprise (MGE)
+Dept of Mines (DOM)
+Forest Department",,,4548338160.92,0,4548338160.92,,5405651968.42,0,5405651968.42,,-857313807.5000001
+7,1,Royalties on production - 20% collected by/paid to  MGE,,2344388379.54,-2344388379.54,0,,,0,0,,0
+8,2,Royalties on production- 20% collected by/paid to  DOM,,55597005,0,55597005,,57484770,0,57484770,,-1887765
+9,3,Sale Split - 40%,,0,2344388379.54,2344388379.54,,2377021092.52,0,2377021092.52,,-32632712.98000002
+10,4,Royalties on Sales- 7%,,265496046.82000002,0,265496046.82000002,,724498222.6,0,724498222.6,,-459002175.78
+11,5,"Service  Fees - 3%, 1%",,209892252.20000002,0,209892252.20000002,,310499045.02000004,0,310499045.02000004,,-100606792.82000002
+12,6,Permit fees,,0,0,0,,164200000,0,164200000,,-164200000
+13,7,"Incentive fees 1%, 2%",,94832287.28,0,94832287.28,,93149578.24000001,0,93149578.24000001,,1682709.0399999917
+14,8,"Commercial Tax - 15%, 5% collected by (paid to) MGE",,1578132190.0800002,0,1578132190.0800002,,1609873117.0800002,0,1609873117.0800002,,-31740927
+15,9,Land rental fees,,,0,0,,,0,0,,0
+16,10,Environmental / Plantation fees,,,0,0,,,0,0,,0
+17,11,"Other significant payments (> 50,000 USD)",,,0,0,,68926142.96000001,0,68926142.96000001,,-68926142.96000001
+18,"Ministry of Planing and Finance
+IRD
+Customs department",,,0,0,0,,1817927696.9,-1817927696.9,0,,0
+19,12,Corporate Income Tax (CIT),,,0,0,,,0,0,,0
+20,13,Commercial Tax,,,0,0,,1552431650.0800002,-1552431650.0800002,0,,0
+21,14,Custom Duties,,,0,0,,0,0,0,,0
+22,15,Royalties on Sales,,,0,0,,265496046.82000002,-265496046.82000002,0,,0
+23,16,"Other significant payments (> 50,000 USD) IRD",,,0,0,,,0,0,,0
+24,Central Committee (MONREC),,,0,0,0,,98640437.7,0,98640437.7,,-98640437.7
+25,17,Emporium Fees / Sale Fees,,,0,0,,98640437.7,0,98640437.7,,-98640437.7
+26,States/Regions,,,0,0,0,,0,0,0,,0
+27,18,Contribution to the State/region social development fund,,,0,0,,,0,0,,0
+28,B- Unilateral company disclosures,,,65289000,0,65289000,,0,0,0,,0
+29,Social  Payments ,,,65289000,0,65289000,,0,0,0,,0
+30,19,Mandatory Corporate Social Responsibility,,,0,0,,,,,,
+31,20,Voluntary Corporate Social Responsibility,,65289000,0,65289000,,,,,,
+32,,Total payments,,4548338160.92,0,4548338160.92,,7322220103.0199995,-1817927696.9,5504292406.12,,-955954245.2000002
