@@ -17,14 +17,14 @@
 
     <style>
       body {
-        padding: 10px;
+        padding: 30px;
         min-width: 600px;
         max-width: 1200px;
         margin: auto;
       }
       #chart {
-        height: 650px;
-        font: 10px sans-serif;
+        height: 850px;
+        font: 12px sans-serif;
       }
       .node rect {
         fill-opacity: .9;
@@ -59,7 +59,7 @@
         /* color: #eeeeee; */
         color: black;
         padding: 0px 10px;
-        width: 200px;
+        width: 350px;
         font-size: 11px;
         z-index: 10;
         -webkit-touch-callout: none; /* iOS Safari */
@@ -72,6 +72,8 @@
     </style>
   </head>
   <body>
+<!--    <button>Reset Zoom</button>-->
+    <h4>Data source: <select id="mainTitle"></select></h3>
     <div id="chart"></div>
 
     
@@ -83,7 +85,10 @@
         .style("opacity", 0);
       
       var width = 1200;
-      var height = 650;
+      var height = 700;
+      var maxChars = 35;
+      var maxNodeHeight = 4;
+      var alphaForChartElements = 0.9;
 
       
       var colors = {
@@ -99,173 +104,218 @@
             'Other material transfers (> 50,000 USD)': '#ff6e40',
             'fallback': '#9f9fa3'
           };
-      d3.json("sankey_data.json", function(error, json) {
-        var chart = d3.select("#chart").append("svg").chart("Sankey.Path");
-        chart
-          .name(label)
-          .colorNodes(function(name, node) {
-            return color(node, 1) || colors.fallback;
-          })
-          .colorLinks(function(link) {
-            return color(link.source, 4) || color(link.target, 1) || colors.fallback;
-          })
-          .nodeWidth(10)
-          .nodePadding(8)
-          .spread(true)
-          .iterations(0)
-          .draw(json);
-        
-        
-        chart.data.nodes.map(function (d) {
-          console.log(d);
-          d.inTotal = d.targetLinks
-            .map(function (data) {return data.value;})
-            .reduce(function (total, val) {return total + val;},0);
-          d.outTotal = d.sourceLinks
-            .map(function (data) {return data.value;})
-            .reduce(function (total, val) {return total + val;},0);
-        })
-        
-        
-        function label(node) {
-          return node.name; //.replace(/\s*\(.*?\)$/, '');
-        }
-        
-        function color(node, depth) {
-          var name = node.name; //.replace(/(_score)?(_\d+)?$/, '');
-          if (colors[name]) {
-            return colors[name];
-          } else if (depth > 0 && node.targetLinks && node.targetLinks.length == 1) {
-            return color(node.targetLinks[0].source, depth-1);
-          } else {
-            return null;
-          }
-        }
-        
-        
-        //////// TOOLTIP //////////
-        
-         chart.on('node:mouseover', function(node) {
-          console.log(node);
-//          alert('Clicked on ' + node.name);
-          
-          var content;
       
-
-          content = "<p> " + node.name + " </p>";
-//          content += d3.format(",.0f")(node.value) + " Kyats </br>";
-          if (node.inTotal) content += "Inflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.inTotal/1000000) + "</div> million Kyats </br>";
-          if (node.outTotal) content += "Outflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.outTotal/1000000) + "</div> million Kyats </br>";
-//          content += "(US$ " + d3.format(",.0f")(node.value_reported_as_USD) + ") </p>";
-//          content += "<h3>" + d.data.Cause_en + " </br>";
-//          content += d.data.Cause_mm_uni_rev_orig + "</h3>";
-//
-//          if (d.data.value > 0.001)
-//            content += "<b><big>" + d3.format(".2%")(d.data.value) + "</big> </b>";
-//          else
-//            content += "<b><big>" + d3.format(".4%")(d.data.value) + "</big> </b>";
-//
-//
-//          content += "of total DALYs</br>(" + d3.format(".4%")(d.data.Lower_bound) + " - " + d3.format(".4%")(d.data.Upper_bound) + ") </br></br>";
-
-
-          div.transition()		
-            .duration(100)
-            .style("display", "inline")
-            .style("opacity", .9);
-
-          if (d3.event.pageX + 300 < width && d3.event.pageY + 100 < height) {
-            div.html(content)	
-            .style("left", (d3.event.pageX + 30) + "px")		
-            .style("top", (d3.event.pageY - 28) + "px");	  
-          } else if (d3.event.pageX + 150 >= width && d3.event.pageY + 100 < height){
-            div.html(content)	
-            .style("left", (d3.event.pageX - 270) + "px")		
-            .style("top", (d3.event.pageY - 28) + "px");	  
-          } else if (d3.event.pageX + 150 < width && d3.event.pageY + 100 >= height) {
-            div.html(content)	
-            .style("left", (d3.event.pageX - 30) + "px")		
-            .style("top", (d3.event.pageY - 228) + "px");	  
-          } else {
-            div.html(content)	
-            .style("left", (d3.event.pageX - 270) + "px")		
-            .style("top", (d3.event.pageY - 228) + "px");	  
-          }
-    
-          
-          
-        });
-        
-        chart.on('node:mouseout', function(node) {
-          div.transition()		
-            .duration(100)	
-            .style("display", "none")
-            .style("opacity", 0);	 
-        });
-        
-        
-        chart.on('link:mouseover', function(link) {
-//          console.log(node);
-//          alert('Clicked on ' + node.name);
-          
-          var content;
+      var zoom = d3.behavior.zoom()
+            .scaleExtent([1, 10])
+            .on("zoom", zoomed);
       
+      var container = d3.select("#chart")
+          .append("svg");
+      
+      
+      var datasets = {
+        "2013-14 EITI Report": "sankey_data_2013-14.json",
+//        "2014-15 EITI Report": "data/2014-15_Annex_10-Register_of_Licenses-gems_and_jade_CLEAN.csv",
+        "2015-16 EITI Report": "sankey_data_2015-16.json"
+      //  "2014 EITI Report": "data/Gems_and_jade_eiti_2014.csv",
+      //  "Hkamti test data": "data/Hkamti-test-1.csv"
+      }
 
-          content = "<p> From: " + link.source.name + " </br>To: " + link.target.name + "</p>";
-          content += "<div class='bignum'>" + d3.format(",.0f")(link.value/1000000) + "</div> million Kyats </br>";
-//          content += "(US$ " + d3.format(",.0f")(link.value_reported_as_USD) + ") </p>";
-          content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.source.outTotal) 
-            + "</div> of revenue flowing from </br>" +link.source.name+ " </br>";
-          content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.target.inTotal) 
-            + "</div> of revenue flowing to </br> " +link.target.name+ " </br>";
-//          content += "<h3>" + d.data.Cause_en + " </br>";
-//          content += d.data.Cause_mm_uni_rev_orig + "</h3>";
-//
-//          if (d.data.value > 0.001)
-//            content += "<b><big>" + d3.format(".2%")(d.data.value) + "</big> </b>";
-//          else
-//            content += "<b><big>" + d3.format(".4%")(d.data.value) + "</big> </b>";
-//
-//
-//          content += "of total DALYs</br>(" + d3.format(".4%")(d.data.Lower_bound) + " - " + d3.format(".4%")(d.data.Upper_bound) + ") </br></br>";
+      var datasetNames = Object.keys(datasets);
+
+      var option, si = 0, sil = datasetNames.length;
+
+      var datasetSelect = document.getElementById('mainTitle');
+
+      for (; si < sil; si += 1) {
+          option = document.createElement('option');
+          option.setAttribute('value', datasets[datasetNames[si]]);
+          option.appendChild(document.createTextNode(datasetNames[si]));
+          datasetSelect.appendChild(option);
+      }
+      
+      updateData("2013-14 EITI Report");
+  
+      datasetSelect.onchange = function() {
+        console.log(datasetSelect.options[datasetSelect.selectedIndex].text);
+        updateData(datasetSelect.options[datasetSelect.selectedIndex].text);
+      }
+
+      function updateData(page) {
+      
+        d3.selectAll("g > *").remove()
+
+        d3.json(datasets[page], function(error, json) {
+          var chart = container.chart("Sankey.Path");
+
+          svg = d3.select("svg").call(zoom);
+
+          chart
+            .name(label)
+            .colorNodes(function(name, node) {
+              return color(node, 1) || colors.fallback;
+            })
+            .colorLinks(function(link) {
+              return color(link.source, 4) || color(link.target, 1) || colors.fallback;
+            })
+            .nodeWidth(10)
+            .nodePadding(8)
+            .spread(true)
+            .iterations(0)
+            .draw(json);
 
 
-          div.transition()		
-            .duration(100)
-            .style("display", "inline")
-            .style("opacity", .9);
+          chart.data.nodes.map(function (d) {
+  //          console.log(d);
+            d.inTotal = d.targetLinks
+              .map(function (data) {return data.value;})
+              .reduce(function (total, val) {return total + val;},0);
+            d.outTotal = d.sourceLinks
+              .map(function (data) {return data.value;})
+              .reduce(function (total, val) {return total + val;},0);
+          })
 
-          if (d3.event.pageX + 300 < width && d3.event.pageY + 100 < height) {
-            div.html(content)	
-            .style("left", (d3.event.pageX + 30) + "px")		
-            .style("top", (d3.event.pageY - 28) + "px");	  
-          } else if (d3.event.pageX + 150 >= width && d3.event.pageY + 100 < height){
-            div.html(content)	
-            .style("left", (d3.event.pageX - 270) + "px")		
-            .style("top", (d3.event.pageY - 28) + "px");	  
-          } else if (d3.event.pageX + 150 < width && d3.event.pageY + 100 >= height) {
-            div.html(content)	
-            .style("left", (d3.event.pageX - 30) + "px")		
-            .style("top", (d3.event.pageY - 228) + "px");	  
-          } else {
-            div.html(content)	
-            .style("left", (d3.event.pageX - 270) + "px")		
-            .style("top", (d3.event.pageY - 228) + "px");	  
+
+          function label(node) {
+  //          console.log(node);
+            if (node.dy < maxNodeHeight)
+              return "";
+            else if (node.name.length > maxChars) 
+              return node.name.slice(0,maxChars+1)+ " ...";
+            else
+              return node.name; //.replace(/\s*\(.*?\)$/, '');
           }
-    
-          
-          
+
+          function color(node, depth) {
+            var name = node.name; //.replace(/(_score)?(_\d+)?$/, '');
+            if (colors[name]) {
+              return hexToRgbAddAlpha(colors[name],alphaForChartElements);
+            } else if (depth > 0 && node.targetLinks && node.targetLinks.length == 1) {
+              return color(node.targetLinks[0].source, depth-1);
+            } else {
+              return null;
+            }
+          }
+
+          function hexToRgbAddAlpha(hex,alpha) {
+            var bigint = parseInt(hex.split("#")[1], 16);
+            var r = (bigint >> 16) & 255;
+            var g = (bigint >> 8) & 255;
+            var b = bigint & 255;
+
+            return "rgba(" +r + "," + g + "," + b + "," + alpha + ")";
+          }
+
+
+
+          //////// TOOLTIP //////////
+
+           chart.on('node:mouseover', function(node) {
+            console.log(node);
+  //          alert('Clicked on ' + node.name);
+
+            var content;
+
+
+            content = "<div class='bignum'> " + node.name + " </div> <br/>";
+  //          content += d3.format(",.0f")(node.value) + " Kyats </br>";
+            if (node.inTotal) content += "Inflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.inTotal/1000000) + "</div> million Kyats </br>";
+            if (node.outTotal) content += "Outflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.outTotal/1000000) + "</div> million Kyats </br>";
+
+
+            div.transition()		
+              .duration(100)
+              .style("display", "inline")
+              .style("opacity", .9);
+
+            if (d3.event.pageX + 450 < width && d3.event.pageY + 100 < height) {
+              div.html(content)	
+              .style("left", (d3.event.pageX + 30) + "px")		
+              .style("top", (d3.event.pageY - 28) + "px");	  
+            } else if (d3.event.pageX + 450 >= width && d3.event.pageY + 100 < height){
+              div.html(content)	
+              .style("left", (d3.event.pageX - 470) + "px")		
+              .style("top", (d3.event.pageY - 28) + "px");	  
+            } else if (d3.event.pageX + 450 < width && d3.event.pageY + 100 >= height) {
+              div.html(content)	
+              .style("left", (d3.event.pageX - 30) + "px")		
+              .style("top", (d3.event.pageY - 228) + "px");	  
+            } else {
+              div.html(content)	
+              .style("left", (d3.event.pageX - 470) + "px")		
+              .style("top", (d3.event.pageY - 228) + "px");	  
+            }
+
+
+
+          });
+
+          chart.on('node:mouseout', function(node) {
+            div.transition()		
+              .duration(100)	
+              .style("display", "none")
+              .style("opacity", 0);	 
+          });
+
+
+          chart.on('link:mouseover', function(link) {
+  //          console.log(node);
+  //          alert('Clicked on ' + node.name);
+
+            var content;
+
+
+            content = "<div class='bignum'> From: " + link.source.name + " </br>To: " + link.target.name + "</div><br/>";
+            content += "<div class='bignum'>" + d3.format(",.0f")(link.value/1000000) + "</div> million Kyats </br>";
+  //          content += "(US$ " + d3.format(",.0f")(link.value_reported_as_USD) + ") </p>";
+            content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.source.outTotal) 
+              + "</div> of revenue flowing from </br>" +link.source.name+ " </br>";
+            content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.target.inTotal) 
+              + "</div> of revenue flowing to </br> " +link.target.name+ " </br>";
+
+
+            div.transition()		
+              .duration(100)
+              .style("display", "inline")
+              .style("opacity", .9);
+
+            if (d3.event.pageX + 450 < width && d3.event.pageY + 100 < height) {
+              div.html(content)	
+              .style("left", (d3.event.pageX + 30) + "px")		
+              .style("top", (d3.event.pageY - 28) + "px");	  
+            } else if (d3.event.pageX + 450 >= width && d3.event.pageY + 100 < height){
+              div.html(content)	
+              .style("left", (d3.event.pageX - 470) + "px")		
+              .style("top", (d3.event.pageY - 28) + "px");	  
+            } else if (d3.event.pageX + 450 < width && d3.event.pageY + 100 >= height) {
+              div.html(content)	
+              .style("left", (d3.event.pageX - 30) + "px")		
+              .style("top", (d3.event.pageY - 228) + "px");	  
+            } else {
+              div.html(content)	
+              .style("left", (d3.event.pageX - 470) + "px")		
+              .style("top", (d3.event.pageY - 228) + "px");	  
+            }
+
+
+
+          });
+
+          chart.on('link:mouseout', function(link) {
+            div.transition()		
+              .duration(100)	
+              .style("display", "none")
+              .style("opacity", 0);	 
+          });
+
+
         });
-        
-        chart.on('link:mouseout', function(link) {
-          div.transition()		
-            .duration(100)	
-            .style("display", "none")
-            .style("opacity", 0);	 
-        });
-        
-        
-      });
+      }
+      
+    function zoomed() {
+      container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+      
     </script>
   </body>
 </html>
