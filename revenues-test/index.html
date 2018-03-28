@@ -1,321 +1,523 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Revenues from Gems and Jade Companies</title>
-<!--
-    <script src="//d3js.org/d3.v3.min.js"></script>
-    <script src="//cdn.rawgit.com/newrelic-forks/d3-plugins-sankey/master/sankey.js"></script>
-    <script src="//cdn.rawgit.com/misoproject/d3.chart/master/d3.chart.min.js"></script>
-    <script src="//cdn.rawgit.com/q-m/d3.chart.sankey/master/d3.chart.sankey.min.js"></script>
-    
--->
-    <script src="js/d3.v3.js"></script>
-<!--    <script src="/js/sankey.js"></script>-->
-    <script src="js/d3.chart.min.js"></script>
-    <script src="js/d3.chart.sankey.js"></script>
+	<meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
-    <style>
-      body {
-        padding: 30px;
-        min-width: 600px;
-        max-width: 1200px;
-        margin: auto;
-      }
-      #chart {
-        height: 850px;
-        font: 12px sans-serif;
-      }
-      .node rect {
-        fill-opacity: .9;
-        shape-rendering: crispEdges;
-        stroke-width: 0;
-      }
-      .node text {
-        text-shadow: 0 1px 0 #fff;
-      }
-      .link {
-        fill: none;
-        stroke: #000;
-        stroke-opacity: .2;
-      }
-      
-      .bignum {
-        display: inline-block;
-        font: 18px sans-serif;
-      }
-      
-      .tooltip  {
-        position: absolute;
-        stroke: #444;
-        top: 3000px;
-        left: 100px;
-        -moz-border-radius:3px;
-        border-radius: 3px;
-        border: 2px solid #000;
-        /* background: #222222; */
-        background: #fff;
-        opacity: .9;
-        /* color: #eeeeee; */
-        color: black;
-        padding: 0px 10px;
-        width: 350px;
-        font-size: 11px;
-        z-index: 10;
-        -webkit-touch-callout: none; /* iOS Safari */
-        -webkit-user-select: none;   /* Chrome/Safari/Opera */
-        -khtml-user-select: none;    /* Konqueror */
-        -moz-user-select: none;      /* Firefox */
-        -ms-user-select: none;       /* Internet Explorer/Edge */
-        user-select: none;     
-      }
-    </style>
-  </head>
-  <body>
-<!--    <button>Reset Zoom</button>-->
-    <h4>Data source: <select id="mainTitle"></select></h3>
-    <div id="chart"></div>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" id="bootstrap-css">
+	
+	<script src="http://d3js.org/d3.v3.js"></script>
+	<script type="text/javascript" src="https://cdn.rawgit.com/Caged/d3-tip/master/index.js"></script>
 
-    
-    
-    <script>
-    
-      var div = d3.select("body").append("div")	
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-      
-      var width = 1200;
-      var height = 700;
-      var maxChars = 35;
-      var maxNodeHeight = 4;
-      var alphaForChartElements = 0.9;
+	<!-- Get inicial sample from http://jsfiddle.net/QwMPS/ --> 
+	<script src="js/d3sankey.js"></script> 
 
-      
-      var colors = {
-            'Royalties': '#edbd00',
-            'Transfers to Other Accounts': '#245a7a',
-            'Sale Split': '#367d85',
-            'State Contribution': '#245a7a',
-            'Emporium Fees / Sale Fees': '#97ba4c',
-            'Corporate Income Tax': '#6cac2b',
-            'Commercial Tax': '#6cac2b',
-            'Supervision Fees':'#6c256f',
-            'Other significant payments (> 50,000 USD)': '#ff6e40',
-            'Other material transfers (> 50,000 USD)': '#ff6e40',
-            'fallback': '#9f9fa3'
-          };
-      
-      var zoom = d3.behavior.zoom()
-            .scaleExtent([1, 10])
-            .on("zoom", zoomed);
-      
-      var container = d3.select("#chart")
-          .append("svg");
-      
-      
-      var datasets = {
-        "2013-14 EITI Report": "sankey_data_2013-14.json",
-//        "2014-15 EITI Report": "data/2014-15_Annex_10-Register_of_Licenses-gems_and_jade_CLEAN.csv",
-        "2015-16 EITI Report": "sankey_data_2015-16.json"
-      //  "2014 EITI Report": "data/Gems_and_jade_eiti_2014.csv",
-      //  "Hkamti test data": "data/Hkamti-test-1.csv"
-      }
-
-      var datasetNames = Object.keys(datasets);
-
-      var option, si = 0, sil = datasetNames.length;
-
-      var datasetSelect = document.getElementById('mainTitle');
-
-      for (; si < sil; si += 1) {
-          option = document.createElement('option');
-          option.setAttribute('value', datasets[datasetNames[si]]);
-          option.appendChild(document.createTextNode(datasetNames[si]));
-          datasetSelect.appendChild(option);
-      }
-      
-      updateData("2013-14 EITI Report");
-  
-      datasetSelect.onchange = function() {
-        console.log(datasetSelect.options[datasetSelect.selectedIndex].text);
-        updateData(datasetSelect.options[datasetSelect.selectedIndex].text);
-      }
-
-      function updateData(page) {
-      
-        d3.selectAll("g > *").remove()
-
-        d3.json(datasets[page], function(error, json) {
-          var chart = container.chart("Sankey.Path");
-
-          svg = d3.select("svg").call(zoom);
-
-          chart
-            .name(label)
-            .colorNodes(function(name, node) {
-              return color(node, 1) || colors.fallback;
-            })
-            .colorLinks(function(link) {
-              return color(link.source, 4) || color(link.target, 1) || colors.fallback;
-            })
-            .nodeWidth(10)
-            .nodePadding(8)
-            .spread(true)
-            .iterations(0)
-            .draw(json);
-
-
-          chart.data.nodes.map(function (d) {
-  //          console.log(d);
-            d.inTotal = d.targetLinks
-              .map(function (data) {return data.value;})
-              .reduce(function (total, val) {return total + val;},0);
-            d.outTotal = d.sourceLinks
-              .map(function (data) {return data.value;})
-              .reduce(function (total, val) {return total + val;},0);
-          })
-
-
-          function label(node) {
-  //          console.log(node);
-            if (node.dy < maxNodeHeight)
-              return "";
-            else if (node.name.length > maxChars) 
-              return node.name.slice(0,maxChars+1)+ " ...";
-            else
-              return node.name; //.replace(/\s*\(.*?\)$/, '');
-          }
-
-          function color(node, depth) {
-            var name = node.name; //.replace(/(_score)?(_\d+)?$/, '');
-            if (colors[name]) {
-              return hexToRgbAddAlpha(colors[name],alphaForChartElements);
-            } else if (depth > 0 && node.targetLinks && node.targetLinks.length == 1) {
-              return color(node.targetLinks[0].source, depth-1);
-            } else {
-              return null;
-            }
-          }
-
-          function hexToRgbAddAlpha(hex,alpha) {
-            var bigint = parseInt(hex.split("#")[1], 16);
-            var r = (bigint >> 16) & 255;
-            var g = (bigint >> 8) & 255;
-            var b = bigint & 255;
-
-            return "rgba(" +r + "," + g + "," + b + "," + alpha + ")";
-          }
-
-
-
-          //////// TOOLTIP //////////
-
-           chart.on('node:mouseover', function(node) {
-            console.log(node);
-  //          alert('Clicked on ' + node.name);
-
-            var content;
-
-
-            content = "<div class='bignum'> " + node.name + " </div> <br/>";
-  //          content += d3.format(",.0f")(node.value) + " Kyats </br>";
-            if (node.inTotal) content += "Inflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.inTotal/1000000) + "</div> million Kyats </br>";
-            if (node.outTotal) content += "Outflows:</br> <div class='bignum'>" + d3.format(",.0f")(node.outTotal/1000000) + "</div> million Kyats </br>";
-
-
-            div.transition()		
-              .duration(100)
-              .style("display", "inline")
-              .style("opacity", .9);
-
-            if (d3.event.pageX + 450 < width && d3.event.pageY + 100 < height) {
-              div.html(content)	
-              .style("left", (d3.event.pageX + 30) + "px")		
-              .style("top", (d3.event.pageY - 28) + "px");	  
-            } else if (d3.event.pageX + 450 >= width && d3.event.pageY + 100 < height){
-              div.html(content)	
-              .style("left", (d3.event.pageX - 470) + "px")		
-              .style("top", (d3.event.pageY - 28) + "px");	  
-            } else if (d3.event.pageX + 450 < width && d3.event.pageY + 100 >= height) {
-              div.html(content)	
-              .style("left", (d3.event.pageX - 30) + "px")		
-              .style("top", (d3.event.pageY - 228) + "px");	  
-            } else {
-              div.html(content)	
-              .style("left", (d3.event.pageX - 470) + "px")		
-              .style("top", (d3.event.pageY - 228) + "px");	  
-            }
-
-
-
-          });
-
-          chart.on('node:mouseout', function(node) {
-            div.transition()		
-              .duration(100)	
-              .style("display", "none")
-              .style("opacity", 0);	 
-          });
-
-
-          chart.on('link:mouseover', function(link) {
-  //          console.log(node);
-  //          alert('Clicked on ' + node.name);
-
-            var content;
-
-
-            content = "<div class='bignum'> From: " + link.source.name + " </br>To: " + link.target.name + "</div><br/>";
-            content += "<div class='bignum'>" + d3.format(",.0f")(link.value/1000000) + "</div> million Kyats </br>";
-  //          content += "(US$ " + d3.format(",.0f")(link.value_reported_as_USD) + ") </p>";
-            content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.source.outTotal) 
-              + "</div> of revenue flowing from </br>" +link.source.name+ " </br>";
-            content += "<div class='bignum'>" + d3.format(".2%")(link.value/link.target.inTotal) 
-              + "</div> of revenue flowing to </br> " +link.target.name+ " </br>";
-
-
-            div.transition()		
-              .duration(100)
-              .style("display", "inline")
-              .style("opacity", .9);
-
-            if (d3.event.pageX + 450 < width && d3.event.pageY + 100 < height) {
-              div.html(content)	
-              .style("left", (d3.event.pageX + 30) + "px")		
-              .style("top", (d3.event.pageY - 28) + "px");	  
-            } else if (d3.event.pageX + 450 >= width && d3.event.pageY + 100 < height){
-              div.html(content)	
-              .style("left", (d3.event.pageX - 470) + "px")		
-              .style("top", (d3.event.pageY - 28) + "px");	  
-            } else if (d3.event.pageX + 450 < width && d3.event.pageY + 100 >= height) {
-              div.html(content)	
-              .style("left", (d3.event.pageX - 30) + "px")		
-              .style("top", (d3.event.pageY - 228) + "px");	  
-            } else {
-              div.html(content)	
-              .style("left", (d3.event.pageX - 470) + "px")		
-              .style("top", (d3.event.pageY - 228) + "px");	  
-            }
-
-
-
-          });
-
-          chart.on('link:mouseout', function(link) {
-            div.transition()		
-              .duration(100)	
-              .style("display", "none")
-              .style("opacity", 0);	 
-          });
-
-
-        });
-      }
-      
-    function zoomed() {
-      container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    <style type="text/css">
+		svg text {
+			font-size: 14px;
+			stroke-width: 0;
+			fill: black;
+		}
+		html, body {
+			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
+			justify-content: center;
+			align-items: center;
+			font-size: 12px;
+/*			overflow: hidden;*/
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+		}
+		.sankeybox {
+			display: flex;
+			flex-direction: column;
+      height: 900px;
+      width: 95%;
+      margin-left: 30px;
+/*      position: relative;*/
+      border:1px solid #909090;
+      vertical-align: top;
+      float: left;
     }
+		.sankey .node text {
+			pointer-events: none;
+		}
+		.sankey .link {
+			fill: none;
+			stroke: #000;
+			stroke-opacity: .2;
+		}
+		.sankey .link:hover {
+			stroke-opacity: .4;
+		}
+		h1, h2, h3 {
+			line-height: 12px !important;
+		}
+		.d3-tip h1 {
+			font-size: 14px;
+			padding: 0;
+			margin-bottom: 5px;
+			width: 100%;
+		}
+		.d3-tip h2 {
+			font-weight: bold;
+			font-size: 12px;
+			padding-right: inherit;
+			padding-left: inherit;
+			padding-top: 2px;
+			padding-bottom: 2px;
+			margin: 0px;
+		}
+		.d3-tip h3 {
+			font-weight: normal;
+			font-size: 8px;
+			margin: 0;
+			padding: 0;
+		}
+		.d3-tip table {
+			font-weight: normal;
+			font-size: 12px;
+			padding: none;
+			margin: 0;
+			width: 100%;
+			border: none;
+			border-collapse: collapse;
+		}
+		.d3-tip td {
+			padding-top: 2px;
+			padding-bottom: 2px;
+		}
+		.d3-tip .col-left {
+			padding-right: 8px;
+		}
+		.d3-tip .table-wrapper {
+			margin: 0;
+			padding: inherit;
+			border: none;
+		}
+		.d3-tip {
+			line-height: 1;
+			font-weight: normal;
+			padding: 4px;
+			background: white;
+			color: black;
+			border-radius: 2px;
+			pointer-events: none;
+			background:  white;
+			box-shadow: 1px 1px 4px grey;
+		}
+    </style>	
+
+	<style>
+		.node rect {
+		  cursor: move;
+		  fill-opacity: .9;
+		  shape-rendering: crispEdges;
+		}
+		.node text {
+		  pointer-events: none;
+		  text-shadow: 0px 0px 13px #fff;
+		}
+		.node:hover {
+			stroke-opacity: .2;
+		}
+		.link {
+		  fill: none;
+		  stroke: #000;
+		  stroke-opacity: .2;
+		}
+		.link:hover {
+		  stroke-opacity: .5;
+		}
+	</style>
+	<style>
+	
+	.d3-zoom-controls {
+	  position: relative;
+    margin: 30px;
+/*    width: 50px;*/
+/*	  left: 15px;*/
+/*	  top: 10px;*/
+    display: inline;
+	}
+	
+	.d3-zoom-controls .btn-circle {
+	  width: 30px;
+	  height: 30px;
+	  align-items: center;
+	  padding: 0px 0;
+	  font-size: 18px;
+	  line-height: 2.00;
+	  display: inline-grid;
+	  border-radius: 30px;
+	  background: rgba(255, 255, 255, 0.7);
+	  color: gray;
+	  margin: 10px 3px;
+	}
+	
+	</style>
+	<body>
+<!--
+    <h1> This is the sankey digram.</h1>
+    <h2>What is Lorem Ipsum?</h2>
+    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+
+    <h2>Why do we use it?</h2>
+    <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+-->
+    <div class="d3-zoom-controls">
+      <a data-zoom="+0.5" class="btn btn-circle"><span class="fa fa-plus"></span></a>
+      <a data-zoom="-0.5" class="btn btn-circle"><span class="fa fa-minus"></span></a>
+      <a data-zoom="0" class="btn btn-circle"><span class="fa fa-crosshairs"></span></a>
+    </div>
+		<div id="sankey" class="sankeybox">
+
+		</div>
+
+		<script>
+		var zoom = {};
+		var drag = {};
+		var svg = {};
+
+    const defaultZoom = 0.8,
+          defaultTranslateX = 200,
+          bordercolor = "#909090";
+		
+		//Zoom function:
+		//Programmatic Pan+Zoom III (Mike Bostock’s Block 7ec977c95910dd026812)
+		//https://bl.ocks.org/mbostock/7ec977c95910dd026812
+		d3.selectAll("a[data-zoom]").on("click", clicked);
+		function clicked() {
+			var valueZoom = this.getAttribute("data-zoom");
+			if (valueZoom != 0)
+			{
+			   svg.call(zoom);
+        
+//        console.log(zoom.center());
+//        console.log(coordinates(zoom.center()));
+			  // Record the coordinates (in data space) of the center (in screen space).
+			  var center0 = zoom.center(), translate0 = zoom.translate(), coordinates0 = coordinates(center0);
+			  zoom.scale(zoom.scale() * Math.pow(2, +valueZoom));
+
+			  // Translate back to the center.
+			  var center1 = point(coordinates0);
+			  zoom.translate([translate0[0] + center0[0] - center1[0], translate0[1] + center0[1] - center1[1]]);
+
+			  svg.transition().duration(750).call(zoom.event);
+			} else {
+				fitZoom();
+			}
+		}
+
+		function fitZoom()
+		{
+			svg.transition().duration(500).call(zoom.translate([defaultTranslateX,10]).scale(defaultZoom).event);
+		}
+		
+		function coordinates(point) {
+		  var scale = zoom.scale(), translate = zoom.translate();
+		  return [(point[0] - translate[0]) / scale, (point[1] - translate[1]) / scale];
+		}
+
+		function point(coordinates) {
+		  var scale = zoom.scale(), translate = zoom.translate();
+		  return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
+		}
+				  
+		function showSankey(energy)
+		{
+			$('.d3-tip-nodes').remove(); //clear olds tips
+			var chartBox = d3.select("#sankey").node().getBoundingClientRect();
+			var margin = {top: 10, right: 10, bottom: 10, left: 20},
+			width = (chartBox.width - margin.left - margin.right),
+			height = chartBox.height - margin.top - margin.bottom;
+//			width = (chartBox.width - chartBox.left - margin.left - margin.right),
+//			height = chartBox.height - chartBox.top  - margin.top - margin.bottom;
       
-    </script>
-  </body>
+//      height = 0.7*height;
+			console.log(energy);
+      console.log(chartBox); 
+      console.log(width);
+      console.log(height);
+      
+		  var linkTooltipOffset = 62,
+			  nodeTooltipOffset = 130;
+			  
+		  //Tooltip function:
+		  //D3 sankey diagram with view options (Austin Czarnecki’s Block cc6371af0b726e61b9ab)
+		  //https://bl.ocks.org/austinczarnecki/cc6371af0b726e61b9ab
+		  var tipLinks = d3.tip()
+			  .attr('class', 'd3-tip')
+			  .offset([-10,0]);
+
+		  var tipNodes = d3.tip()
+			  .attr('class', 'd3-tip d3-tip-nodes')
+			  .offset([-10, 0]);
+			
+			
+		  function formatAmount(val) {
+			  //return val.toLocaleString("en-US", {style: 'currency', currency: "USD"}).replace(/\.[0-9]+/, "");
+			  return parseFloat(val).toFixed(1) + " Kyats";
+		  };
+			  
+			// "➡" 
+			tipLinks.html(function(d) {
+			  var title, candidate;
+			  if (energy.links.indexOf(d.source.name) > -1) {
+				candidate = d.source.name;
+				title = d.target.name;
+			  } else {
+				candidate = d.target.name;
+				title = d.source.name;
+			  }
+				var html =  '<div class="table-wrapper">'+
+					'<h1>'+title+'</h1>'+
+					'<table>'+
+						'<tr>'+
+							'<td class="col-left">'+candidate+'</td>'+
+							'<td align="right">'+formatAmount(d.value)+'</td>'+
+						'</tr>'+
+					'</table>'+
+					'</div>';
+			  return html;
+			});
+
+			tipNodes.html(function(d) {
+			  var object = d3.entries(d),
+				  nodeName = object.filter(function(d) {return d.key=="name";})[0].value,
+				  linksTo = object.filter(function(d) {return d.key=="sourceLinks";})[0].value,
+				  linksFrom = object.filter(function(d) {return d.key=="targetLinks";})[0].value,
+				  html;
+        
+        console.log(linksTo);
+        console.log(linksFrom);
+        console.log(object);
+
+			  html =  '<div class="table-wrapper">'+
+					  '<h1>'+nodeName+'</h1>'+
+					  '<table>';
+        
+        var toLength = linksTo.length > 3 ? 3 : linksTo.length; 
+        var fromLength = linksFrom.length > 3 ? 3 : linksFrom.length; 
+        
+			  if (linksFrom.length > 0 && linksTo.length > 0) {
+          html+= '<tr><td><h2>Input:</h2></td><td></td></tr>'
+
+          for (i = 0; i < fromLength ; ++i) {
+          html += '<tr>'+
+            '<td class="col-left">'+linksFrom[i].source.name+'</td>'+
+            '<td align="right">'+formatAmount(linksFrom[i].value)+'</td>'+
+          '</tr>';
+          }
+        }
+			  if (linksFrom.length > 0 && linksTo.length > 0) {
+				  html+= '<tr><td><h2>Output:</h2></td><td></td></tr>'
+			  
+          for (i = 0; i < toLength; ++i) {
+//            console.log(linksTo[i]);
+            html += '<tr>'+
+                  '<td class="col-left">'+linksTo[i].target.name+'</td>'+
+                  '<td align="right">'+formatAmount(linksTo[i].value)+'</td>'+
+                '</tr>';
+          }
+        }
+			  html += '</table></div>';
+			  return html;
+			});
+			
+			function zoomed() {
+			  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+			}
+
+			function dragstarted(d) {
+			  d3.select(this).classed("dragging", true);
+			}
+
+			function dragged(d) {
+			  d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+			}
+
+			function dragended(d) {
+			  d3.select(this).classed("dragging", false);
+			}	
+			
+			drag = d3.behavior.drag()
+			.origin(function(d) { return d; })
+			.on("dragstart", dragstarted)
+			.on("drag", dragged)
+			.on("dragend", dragended);
+			
+			zoom = d3.behavior.zoom()
+				.scaleExtent([0, 3])
+				.center([width / 2, height / 2])
+				.on("zoom", zoomed);
+			
+		var formatNumber = d3.format(",.0f"),
+			format = function(d) { return formatNumber(d) + " $"; },
+			color = d3.scale.category20();
+
+		svg = d3.select("#sankey").append("svg")
+//			.attr("width", width + chartBox.left + margin.left + margin.right)
+//			.attr("height", height + chartBox.top + margin.top + margin.bottom)
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.call(zoom)
+			.call(tipLinks)
+			.call(tipNodes)
+		  .append("g")
+			.attr("transform", "translate(" + (margin.left) + "," + margin.top + ")");
+
+		var sankey = d3sankey()
+			.nodeWidth(60)
+			.nodePadding(20)
+			.size([width, height]);
+
+		var path = sankey.link();
+		  sankey
+			  .nodes(energy.nodes)
+			  .links(energy.links)
+			  .layout(32);
+      
+      console.log(path);
+
+		  var link = svg.append("g").selectAll(".link")
+			  .data(energy.links)
+			.enter().append("path")
+			  .attr("class", "link")
+			  .attr("d", path)
+//			  .style("stroke", function(d){ return d.source.color || "#00a86b"; })
+			  .style("stroke", function(d){ return d.source.color || "#333"; })
+			  .style("stroke-width", function(d) { return Math.max(1, d.dy); })
+			  .sort(function(a, b) { return b.dy - a.dy; })
+			  .on('mousemove', function(event) {
+				tipLinks
+				  .style("top", (d3.event.pageY - linkTooltipOffset) + "px")
+				  .style("left", function () {
+					var left = (Math.max(d3.event.pageX - linkTooltipOffset, 10)); 
+					left = Math.min(left, window.innerWidth - $('.d3-tip').width() - 20)
+					return left + "px"; })
+				})
+			  .on('mouseover', tipLinks.show)
+			  .on('mouseout', tipLinks.hide);
+			  
+		  var node = svg.append("g").selectAll(".node")
+			  .data(energy.nodes)
+			.enter().append("g")
+			  .attr("class", "node")
+			  .attr("transform", function(d) {
+				  return "translate(" + d.x + "," + d.y + ")";
+			  })
+			.on('mousemove', function(event) {
+				tipNodes
+				  .style("top", (d3.event.pageY - $('.d3-tip-nodes').height() - 20) + "px")
+				  .style("left", function () {
+					var left = (Math.max(d3.event.pageX - nodeTooltipOffset, 10)); 
+					left = Math.min(left, window.innerWidth - $('.d3-tip').width() - 20)
+					return left + "px"; })
+				})
+			.on('mouseover', tipNodes.show)
+			.on('mouseout', tipNodes.hide)
+			.call(d3.behavior.drag()
+			  .origin(function(d) { return d; })
+			  .on("dragstart", function() { 
+				d3.event.sourceEvent.stopPropagation();  //Disable drag sankey on node select
+				this.parentNode.appendChild(this); })
+			  .on("drag", dragmove));
+
+		  node.append("polygon")
+//			  .attr("height", function(d) { return d.dy; })
+//			  .attr("width", sankey.nodeWidth())
+			  .attr("points",function(d) { 
+          console.log(d);
+//          return d.map(function(d) {
+//              return [scaleX(d.x),scaleY(d.y)].join(",");
+//          }
+          var toReturn = [{"x": 0.0, "y": 0.0},
+                          {"x": sankey.nodeWidth()/2, "y": 0.0},
+                          {"x": sankey.nodeWidth(), "y": d.dy/2},
+                          {"x": sankey.nodeWidth()/2, "y": d.dy},
+                          {"x": 0.0, "y": d.dy},
+                          {"x": sankey.nodeWidth()/2, "y": d.dy/2},]
+              .map(function(d) { return d.x+","+d.y;}).join(" ");
+//          console.log(toReturn);
+        
+          if (d.type == "entity") {
+            toReturn = [{"x": 0.0, "y": 0.0},
+                          {"x": sankey.nodeWidth()/2, "y": 0.0},
+                          {"x": sankey.nodeWidth()/2, "y": d.dy},
+                          {"x": 0.0, "y": d.dy} ]
+              .map(function(d) { return d.x+","+d.y;}).join(" ");
+          }
+        
+          return toReturn;
+        })
+			  .style("fill", function(d) {
+				  if (d.color == undefined)
+//					return d.color = color(d.name.replace(/ .*/, "")); //get new color if node.color is null
+//				  return "#FF6E48";
+				  return "#00a86b";
+			  })
+			  .style("stroke", function(d) { return d3.rgb(d.color).darker(2); });
+
+//		  node.append("text")
+//			  .attr("class","nodeValue")
+//			  .text(function(d) { 
+////          return d.name + "\n" + format(d.value); 
+//          return ""; 
+//        });
+//
+//		  node.selectAll("text.nodeValue")
+//			  .attr("x", sankey.nodeWidth())
+//			  .attr("y", function (d) { return (d.y + 10) })
+//			  .text(function (d) { 
+////          return formatNumber(d.value); 
+//          return ""; 
+//        })
+//			  .attr("dy", 5)
+//			  .attr("text-anchor", "middle");
+
+		  node.append("text")
+			  .attr("class","nodeLabel");
+
+		  node.selectAll("text.nodeLabel")	
+        .attr("x", 20)
+			  .attr("y", function(d) { 
+          return -10; 
+        })
+			  .attr("dy", ".35em")
+			  .attr("text-anchor", "middle")
+			  .attr("transform", null)
+			  .text(function(d) { 
+            return d.name.length > 25 
+              ? d.name.slice(0,25).toUpperCase() + "..." 
+              : d.name.toUpperCase(); })
+			.filter(function(d) { return d.x < width / 8; })
+			  .attr("x", -6)
+			  .attr("y", function(d) { return d.dy / 2; })
+        .attr("text-anchor", "end");
+			function dragmove(d) {
+				d3.select(this)
+//					.attr("transform", "translate(" + d.x + "," +
+//					   (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+          .attr("transform", "translate(" + 
+                (d.x = Math.max(0, Math.min(width*2 - d.dx, d3.event.x))) 
+                + "," +
+                (d.y = Math.max(0, Math.min(height*2 - d.dy, d3.event.y))) + ")");
+				sankey.relayout();
+				link.attr("d", path);
+			};
+
+			fitZoom();
+		}
+
+
+
+
+		d3.json("sankey_data_2013-14.json", function(err,data){ showSankey(data);});
+		</script>
+	</body>
 </html>
