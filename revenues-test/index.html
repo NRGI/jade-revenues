@@ -220,6 +220,7 @@
 		}
 		.node:hover {
 			stroke-opacity: .2;
+      fill: #FF6E48;
 		}
 		.link {
 		  fill: none;
@@ -233,29 +234,78 @@
 	<style>
 	
 	.d3-zoom-controls {
-	  position: relative;
-/*    margin: 30px;*/
-/*    width: 50px;*/
-/*	  left: 15px;*/
-/*	  top: 10px;*/
-    display: inline;
-	}
-	
-	.d3-zoom-controls .btn-circle {
-	  width: 30px;
-	  height: 30px;
-	  align-items: center;
-	  padding: 0px 0;
-	  font-size: 18px;
-	  line-height: 2.00;
-	  display: inline-grid;
-	  border-radius: 30px;
-	  background: rgba(255, 255, 255, 0.7);
-	  color: gray;
-	  margin: 10px 3px;
-	}
-	
-	</style>
+      position: relative;
+  /*    margin: 30px;*/
+  /*    width: 50px;*/
+  /*	  left: 15px;*/
+  /*	  top: 10px;*/
+      display: inline;
+    }
+
+  .d3-zoom-controls .btn-circle {
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    padding: 0px 0;
+    font-size: 18px;
+    line-height: 2.00;
+    display: inline-grid;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    color: gray;
+    margin: 10px 3px;
+  }
+
+  </style>
+
+  <style>
+  #mainSelect {
+    border: 1px solid #909090;
+    text-align: center;
+    display: table-cell;
+  }  
+  
+  .btn-group button {
+/*    background-color: #00A86B;  Green background */
+    border: 1px solid #909090; 
+/*    color: white;  White text */
+    padding: 5px 10px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon */
+    float: left; /* Float the buttons side by side */
+  }
+
+  /* Clear floats (clearfix hack) */
+  .btn-group:after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  .btn-group button:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+  }
+
+  /* Add a background color on hover */
+  .btn-group button:hover {
+    background-color: #00A86B;
+  }
+  .btn-group button:focus {
+    background-color: #00A86B;
+    box-shadow: none; !important;
+  }
+    
+  .btn-group button:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+  .btn-group button:last-child {
+    border-radius: 0 6px 6px 0;
+    margin-left: -1px;
+  }
+    
+  .btn-group button:last-child:first-child {
+    border-radius: 6px 6px 6px 6px;
+  }
+  </style>
 	<body>
 
       <div id="navbar" class="major">
@@ -273,7 +323,8 @@
 
     <h4>Where is the data from?</h4>
     <p>The data used for this tool comes from the 2013-14, 2014-15, and 2015-16 EITI reports and summary sheets. The disaggregated company payments data for 2013-14 comes from the EIT summary sheet for that year, and the disaggregated company payments data for 2014-15 and 2015-16 comes from Annex 18 of those years' reports. The data for payments from companies not included in the EITI roconciliation scope come from Section 6.2 of each year's EITI report. Note that the reconciliation scope was reduced from from 10 billion MMK in 2013-14 to 750 million MMK in 2014-15 and 2015-16, resulting in many more companies included in those years.</p>
-    <h4>Select data source: <select id="mainTitle"></select></h4>
+    <h4>Select data source: <select id="mainSelect"></select></h4>
+    <h4>Select flows to visualise: <div class="btn-group" id="flowSelect"></div></h4>
     <div id="node-title"> <h4>Click on a node (green blocks and arrowheads) to see details</h4> </div>
     <div id="inputs" class="annotation"></div>
     <div id="outputs" class="annotation"></div>
@@ -295,41 +346,127 @@
 
     const defaultZoom = 0.8,
           defaultTranslateX = 200,
-          bordercolor = "#909090";
+          bordercolor = "#909090", 
+          nodeWidth = 60,
+          nodePadding = 20,
+          defaultFlow = "Summary";
 		
       
     var datasets = {
-      "2015-16 EITI Report": {
-        "file": "sankey_data_2015-16.json",
-        "height": 1200
-      },
-      "2014-15 EITI Report": {
-        "file": "sankey_data_2014-15.json",
-        "height": 1500
-      },
-      "2013-14 EITI Report": {
-        "file": "sankey_data_2013-14.json",
-        "height": 800
-      }
+      "2015-16 EITI Report": [
+        {
+          "file": "sankey_data_2015-16.json",
+          "type": "Summary",
+          "height": 1200
+        },{
+          "file": "sankey_data_2013-14.json",
+          "type": "Transfers from Companies",
+          "height": 800
+        },{
+          "file": "sankey_data_2013-14.json",
+          "type": "Inter-government Transfers",
+          "height": 800
+        }
+      ],
+      "2014-15 EITI Report": [
+        {
+          "file": "sankey_data_2014-15.json",
+          "type": "Summary",
+          "height": 1500
+        },{
+          "file": "sankey_data_2014-15.json",
+          "type": "Transfers from Companies",
+          "height": 1500
+        },{
+          "file": "sankey_data_2014-15.json",
+          "type": "Inter-government Transfers",
+          "height": 1500
+        }
+      ],
+      "2013-14 EITI Report": [
+        {
+          "file": "sankey_data_2013-14.json",
+          "type": "Summary",
+          "height": 800
+        }
+      ]
     }
 
     var datasetNames = Object.keys(datasets);
 
     var option, si = 0, sil = datasetNames.length;
 
-    var datasetSelect = document.getElementById('mainTitle');
+    var datasetSelect = document.getElementById('mainSelect');
+      
+    var sankeyDatasetDefault = getDataForSankey(datasetNames[si],defaultFlow);
+    var sankeyDataset = getDataForSankey(datasetNames[si]);
+      
+    console.log(sankeyDataset);
+      
+    var optionFl, sFli = 0, sFlil = sankeyDataset.length;
 
     for (; si < sil; si += 1) {
-        option = document.createElement('option');
-        option.setAttribute('value', datasets[datasetNames[si]]);
-        option.appendChild(document.createTextNode(datasetNames[si]));
-        datasetSelect.appendChild(option);
+      option = document.createElement('option');
+      option.setAttribute('value', sankeyDatasetDefault.file);
+      option.appendChild(document.createTextNode(datasetNames[si]));
+      datasetSelect.appendChild(option);
+    }
+      
+    var flowSelect = document.getElementById('flowSelect');
+      
+    updateFlowSelector(datasetNames[0]);  
+    
+    function updateFlowSelector(year, type) {
+      
+      if (!type) type = defaultFlow;
+      
+      console.log(year);
+      
+      while(flowSelect.childNodes.length > 0){
+        flowSelect.removeChild(flowSelect.childNodes[0]);
+      }
+      
+      var sFli = 0, sFlil = datasets[year].length;
+      
+      for (; sFli < sFlil; sFli += 1) {
+        optionFl = document.createElement('button');
+        optionFl.setAttribute('value', sankeyDataset[sFli].type);
+        optionFl.setAttribute('class', "flowTypeButton");
+        optionFl.appendChild(document.createTextNode(sankeyDataset[sFli].type));
+        
+        optionFl.addEventListener('click', function() {
+          for (i = 0; i< flowSelect.childNodes.length; i++) {
+            flowSelect.childNodes[i].setAttribute('style', 'background-color: white;');
+          }
+          console.log(this.value);
+          this.setAttribute('style', 'background-color: #00A86B;');
+          updateData(datasetSelect.options[datasetSelect.selectedIndex].text,this.value);
+        }, false);
+        
+        if (sankeyDataset[sFli].type == type) optionFl
+          .setAttribute('style', 'background-color: #00A86B;');
+        
+        flowSelect.appendChild(optionFl);
+        
+      }
+    }
+      
+    function getDataForSankey(year,type) {
+//      console.log(year);
+      if (!type) 
+        return datasets[year];
+      else
+        return datasets[year]
+          .filter(function(d) { 
+            if(d.type == type) return true;})[0];
     }
 
-    updateData("2015-16 EITI Report");  
+    updateData("2015-16 EITI Report",defaultFlow);  
+    
     datasetSelect.onchange = function() {
       console.log(datasetSelect.options[datasetSelect.selectedIndex].text);
-      updateData(datasetSelect.options[datasetSelect.selectedIndex].text);
+      updateFlowSelector(datasetSelect.options[datasetSelect.selectedIndex].text);
+      updateData(datasetSelect.options[datasetSelect.selectedIndex].text,defaultFlow);
     }
       
 		//Zoom function:
@@ -414,6 +551,9 @@
 			// "➡" 
 			tipLinks.html(function(d) {
 			  var title, candidate;
+        
+//        console.log(d);
+        
 			  if (energy.links.indexOf(d.source.name) > -1) {
 				candidate = d.source.name;
 				title = d.target.name;
@@ -456,15 +596,26 @@
         
 			  if (toplistFrom.length > 0) {
           html+= '<tr><td><h2>Input:</h2></td><td></td></tr>'
+          html += '<tr>'+
+              '<td class="col-left"><strong>Total Inputs</strong></td>'+
+              '<td class="money-value" align="right"><strong>'+
+              formatAmount(toplistFrom.reduce(function(total, num) {return total + num.val;},0))+
+            '</strong></td>'+'</tr>';
           for (i in toplistFrom) {
             html += '<tr>'+
               '<td class="col-left">'+toplistFrom[i].label+'</td>'+
               '<td class="money-value" align="right">'+formatAmount(toplistFrom[i].val)+'</td>'+
             '</tr>';
           }
+          if (toplistTo.length > 0) html += '<tr><td colspan="2"><hr/></td></tr>'
         }
 			  if (toplistTo.length > 0) {
 				  html+= '<tr><td><h2>Output:</h2></td><td></td></tr>'
+          html += '<tr>'+
+              '<td class="col-left"><strong>Total Outputs</strong></td>'+
+              '<td class="money-value" align="right"><strong>'+
+              formatAmount(toplistTo.reduce(function(total, num) {return total + num.val;},0))+
+            '</strong></td>'+'</tr>';
           for (i in toplistTo) {
             html += '<tr>'+
               '<td class="col-left">'+toplistTo[i].label+'</td>'+
@@ -624,8 +775,8 @@
       })  
       
 		var sankey = d3sankey()
-			.nodeWidth(60)
-			.nodePadding(20)
+			.nodeWidth(nodeWidth)
+			.nodePadding(nodePadding)
 			.size([width, height]);
 
 		var path = sankey.link();
@@ -738,9 +889,11 @@
 //			  .attr("dy", 5)
 //			  .attr("text-anchor", "middle");
 
+      
 		  node.append("text")
 			  .attr("class","nodeLabel");
-
+    
+      
 		  node.selectAll("text.nodeLabel")	
         .attr("x", 20)
 			  .attr("y", function(d) { 
@@ -757,6 +910,33 @@
 			  .attr("x", -6)
 			  .attr("y", function(d) { return d.dy / 2; })
         .attr("text-anchor", "end");
+      
+      node
+        .append("g")
+        .append("rect")
+        .attr("x", function(d) {
+          return -this.parentElement.parentElement.getBoundingClientRect().width/2 + 20;
+        })
+        .attr("y", function(d) {  return -20; })
+        .attr("width", function(d) { 
+          return this.parentElement.parentElement.getBoundingClientRect().width;
+        })
+        .attr("height", "20px")
+        .attr("fill", "rgba(0,0,0,0)")
+      .filter(function(d) { return d.x < width / 8; })
+        .attr("width", function(d) { 
+          return this.parentElement.parentElement.getBoundingClientRect().width/2 + nodePadding + 6;
+        })
+			  .attr("x", function(d) {
+          return -(this.parentElement.parentElement.getBoundingClientRect().width * 0.6) - nodePadding;
+//          return -this.parentElement.parentElement.getBoundingClientRect().width; 
+//            + nodeWidth + nodePadding;
+        })
+			  .attr("y", function(d) { 
+          return this.parentElement.parentElement.getBoundingClientRect().height/2 - 23;
+        });
+      
+      
 			function dragmove(d) {
 				d3.select(this)
 //					.attr("transform", "translate(" + d.x + "," +
@@ -774,8 +954,10 @@
 
 
 
-    function updateData(d) {
-		  d3.json(datasets[d].file, function(err,data){ showSankey(data,datasets[d].height);});      
+    function updateData(d,type) {
+      var dataSet = getDataForSankey(d,type);
+//		  d3.json(datasets[d].file, function(err,data){ showSankey(data,datasets[d].height);});      
+		  d3.json(dataSet.file, function(err,data){ showSankey(data,dataSet.height); });      
     }
 		</script>
 	</body>
