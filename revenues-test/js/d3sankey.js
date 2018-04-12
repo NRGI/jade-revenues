@@ -125,7 +125,7 @@ function d3sankey() {
     }
 
     //
-//    moveSinksRight(x);
+    moveSinksRight(x);
 //    moveSourcesRight(x);
     scaleNodeBreadths((size[0] - nodeWidth) / (x - 1));
   }

@@ -47,7 +47,7 @@
 		.sankeybox {
 			display: flex;
 			flex-direction: column;
-      height: 1200px;
+      height: 1250px;
       width: 95%;
 /*      margin-left: 20px;*/
 /*      position: relative;*/
@@ -355,32 +355,32 @@
     var datasets = {
       "2015-16 EITI Report": [
         {
-          "file": "sankey_data_2015-16.json",
+          "file": "sankey_data_2015-16_summary.json",
           "type": "Summary",
+          "height": 600
+        },{
+          "file": "sankey_data_2015-16_companies.json",
+          "type": "Transfers from Companies",
           "height": 1200
         },{
-          "file": "sankey_data_2013-14.json",
-          "type": "Transfers from Companies",
-          "height": 800
-        },{
-          "file": "sankey_data_2013-14.json",
+          "file": "sankey_data_2015-16_govt.json",
           "type": "Inter-government Transfers",
-          "height": 800
+          "height": 600
         }
       ],
       "2014-15 EITI Report": [
         {
-          "file": "sankey_data_2014-15.json",
+          "file": "sankey_data_2014-15_summary.json",
           "type": "Summary",
-          "height": 1500
+          "height": 600
         },{
-          "file": "sankey_data_2014-15.json",
+          "file": "sankey_data_2014-15_companies.json",
           "type": "Transfers from Companies",
           "height": 1500
         },{
-          "file": "sankey_data_2014-15.json",
+          "file": "sankey_data_2014-15_govt.json",
           "type": "Inter-government Transfers",
-          "height": 1500
+          "height": 600
         }
       ],
       "2013-14 EITI Report": [
@@ -497,7 +497,7 @@
 
 		function fitZoom()
 		{
-			svg.transition().duration(500).call(zoom.translate([defaultTranslateX,10]).scale(defaultZoom).event);
+			svg.transition().duration(500).call(zoom.translate([defaultTranslateX,30]).scale(defaultZoom).event);
 		}
 		
 		function coordinates(point) {
@@ -783,7 +783,7 @@
 		  sankey
 			  .nodes(energy.nodes)
 			  .links(energy.links)
-			  .layout(3);
+			  .layout(1);
       
 //      console.log(path);
 
