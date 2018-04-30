@@ -22,42 +22,62 @@
 	<script src="js/d3sankey.js"></script> 
 
   
+    
     <style type="text/css">
-    @import url("font-awesome.min.css");
+    @import url("stylesheets/font-awesome.min.css");
+/*    @import url("stylesheets/main.css");*/
     @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic");  
       
 		svg text {
-			font-size: 14px;
+			font-size: 15px;
+      font-weight: 400;
 			stroke-width: 0;
 			fill: black;
 		}
 		html, body {
-			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
+/*			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;*/
 			justify-content: center;
 			align-items: center;
-      font: inherit;
-      color: inherit;
-			font-size: 14px;
+      font-family: "Source Sans Pro", Helvetica, sans-serif;
+      font-weight: 300;
+      font-style: normal;
+      color: #666;
+			font-size: 16px;
 /*			overflow: hidden;*/
             padding: 0;
             margin: 20px;
 /*            width: 100%;*/
             height: 100%;
+      padding-top: 10px;
 		}
+      
+      
+    div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, option {
+      
+      font-family: "Source Sans Pro", Helvetica, sans-serif;
+      font-weight: 300;
+      font-style: normal;
+      color: #666;
+    }  
+      
+      
+
+      
 		.sankeybox {
 			display: flex;
 			flex-direction: column;
-      height: 1250px;
+/*      height: 1250px;*/
       width: 95%;
 /*      margin-left: 20px;*/
 /*      position: relative;*/
       border:1px solid #909090;
       vertical-align: top;
-      float: left;
+/*      float: left;*/
     }
 		.sankey .node text {
 			pointer-events: none;
 		}
+/*
 		.sankey .link {
 			fill: none;
 			stroke: #000;
@@ -66,6 +86,7 @@
 		.sankey .link:hover {
 			stroke-opacity: .4;
 		}
+*/
 		h1, h2, h3 {
 /*			line-height: 12px !important;*/
 		}
@@ -80,9 +101,10 @@
 			margin-bottom: 5px;
 			width: 100%;
       line-height: 12px !important;
+			color: #000;
 		}
 		.d3-tip h2 {
-			font-weight: bold;
+			font-weight: 400;
 			font-size: 12px;
 			padding-right: inherit;
 			padding-left: inherit;
@@ -90,6 +112,7 @@
 			padding-bottom: 2px;
 			margin: 0px;
       line-height: 12px !important;
+			color: #000;
 		}
 		.d3-tip h3 {
 			font-weight: normal;
@@ -97,6 +120,7 @@
 			margin: 0;
 			padding: 0;			
       line-height: 12px !important;
+			color: #000;
 		}
 		.d3-tip table {
 			font-weight: normal;
@@ -110,6 +134,7 @@
 		.d3-tip td {
 			padding-top: 2px;
 			padding-bottom: 2px;
+			color: #000;
 		}
 		.d3-tip .col-left {
 			padding-right: 8px;
@@ -123,15 +148,14 @@
 			line-height: 1;
 			font-weight: normal;
 			padding: 4px;
-			background: white;
-			color: black;
+			background: rgba(255,255,255,0.9);
 			border-radius: 2px;
 			pointer-events: none;
-			background:  white;
 			box-shadow: 1px 1px 4px grey;
 		}
     .money-value {
-      font-family: monospace;
+/*      font-family: monospace;*/
+      letter-spacing: 1px;
     }
       
       
@@ -153,57 +177,46 @@
     
     /* Sticky nav */
 
-    #navbar {
+    .navbar {
       overflow: hidden;
       z-index: 1000;
       background-color: #fff;
       text-align: center;
+      padding-bottom: 10px;
     }
 
-    #navbar a {
+    .navbar a {
       float: center;
       display: inline;
     /*  color: #f2f2f2;*/
       text-align: center;
       vertical-align: middle;
       margin: 0px 16px;
-    /*  text-decoration: none;*/
       font-size: 20px;
       border-bottom-width: 0px;
+      text-decoration: none;
     /*  border-bottom: 2px #00A86B;*/
     }
 
-    #navbar a:hover {
+    .navbar a:hover {
     /*  background-color: #ddd;*/
-      color: black;
+/*      color: #00A86B;*/
+      text-decoration: italic;
+/*      border-bottom: 1px solid #494949;*/
       border-bottom-width: 2px;
       border-bottom-style: solid;
       border-bottom-color: #00A86B !important;
     }
 
 
-    #navbar a.active {
+    .navbar a.active {
     /*  background-color: #00A86B;*/
       color: #00A86B;
       border-bottom-width: 2px;
       border-bottom-style: solid;
       border-bottom-color: #00A86B !important;
     } 
-      
-    a {
-      -moz-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-      -webkit-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-      -ms-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-      transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-      border-bottom: dotted 1px #666;
-      color: inherit;
-      text-decoration: none;
-    }
 
-      a:hover {
-        border-bottom-color: transparent !important;
-        color: #00A86B;
-      }
       
       
     </style>	
@@ -219,8 +232,8 @@
 		  text-shadow: 0px 0px 13px #fff;
 		}
 		.node:hover {
-			stroke-opacity: .2;
-      fill: #FF6E48;
+/*			stroke-opacity: .2;*/
+/*      fill: #FF6E48;*/
 		}
 		.link {
 		  fill: none;
@@ -228,7 +241,8 @@
 		  stroke-opacity: .2;
 		}
 		.link:hover {
-		  stroke-opacity: .5;
+		  stroke-opacity: .9;
+      stroke: #FF6E48;
 		}
 	</style>
 	<style>
@@ -240,11 +254,27 @@
   /*	  left: 15px;*/
   /*	  top: 10px;*/
       display: inline;
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-weight: 300;
+    font-style: normal;
     }
 
   .d3-zoom-controls .btn-circle {
     width: 30px;
     height: 30px;
+    align-items: center;
+    padding: 0px 0;
+    font-size: 18px;
+    line-height: 2.00;
+    display: inline-grid;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    color: gray;
+    margin: 10px 3px;
+  }
+    
+  .d3-zoom-controls .btn-long {
+    width: 120px;
     align-items: center;
     padding: 0px 0;
     font-size: 18px;
@@ -263,9 +293,17 @@
     border: 1px solid #909090;
     text-align: center;
     display: table-cell;
+    margin-bottom: 0px;
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-weight: 300;
+    font-style: normal;
   }  
   
   .btn-group button {
+    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-weight: 300;
+    font-style: normal;
+/*    color: #666;*/
 /*    background-color: #00A86B;  Green background */
     border: 1px solid #909090; 
 /*    color: white;  White text */
@@ -305,39 +343,51 @@
   .btn-group button:last-child:first-child {
     border-radius: 6px 6px 6px 6px;
   }
+    
+  .btn-group .selected {
+    background-color: #00A86B;
+  }
+  .btn-group .selected:hover {
+    background-color: #00A86B;
+  }
+  .btn-group .selected:focus {
+    background-color: #00A86B;
+  }
+    
   </style>
 	<body>
 
-      <div id="navbar" class="major">
+      <div class="navbar major">
 <!--          <a class="active" href="/index.html#header">Home</a>-->
         <a href="https://yanoak.github.io/Myanmar-Jade-Data-Portal-Stories/index.html#three">Data Stories</a>
-        <a href="https://yanoak.github.io/Myanmar-Jade-Data-Portal-Stories/tools.html">Data Tools</a>
+        <a href="https://yanoak.github.io/Myanmar-Jade-Data-Portal-Stories/tools.html" class="active">Data Tools</a>
         <a href="https://yanoak.github.io/Myanmar-Jade-Data-Portal-Stories/datasets.html">Datasets</a>
         <a href="https://yanoak.github.io/Myanmar-Jade-Data-Portal-Stories/about.html">About</a>
       </div>
     </br>
     <h1>Revenue Flows Explorer</h1>
-    <p>This tool lets you explore the revenues that are collected from jade and gems mining companies by various government departments, and how each revenue stream feeds into another.</p>
-    
-    <p>This tool is best viewed on a laptop or desktop computer.</p>
+    <p>This tool lets you explore the revenues that are collected from jade and gems mining companies by various government departments, and how each revenue stream feeds into another. Best viewed on a laptop or desktop computer.</p>
 
-    <h4>Where is the data from?</h4>
-    <p>The data used for this tool comes from the 2013-14, 2014-15, and 2015-16 EITI reports and summary sheets. The disaggregated company payments data for 2013-14 comes from the EIT summary sheet for that year, and the disaggregated company payments data for 2014-15 and 2015-16 comes from Annex 18 of those years' reports. The data for payments from companies not included in the EITI roconciliation scope come from Section 6.2 of each year's EITI report. Note that the reconciliation scope was reduced from from 10 billion MMK in 2013-14 to 750 million MMK in 2014-15 and 2015-16, resulting in many more companies included in those years.</p>
-    <h4>Select data source: <select id="mainSelect"></select></h4>
-    <h4>Select flows to visualise: <div class="btn-group" id="flowSelect"></div></h4>
+  
+    <h4>Select data source: 
+      <select id="mainSelect"></select>
+      <div class="btn-group" id="flowSelect"></div></h4>
     <div id="node-title"> <h4>Click on a node (green blocks and arrowheads) to see details</h4> </div>
     <div id="inputs" class="annotation"></div>
     <div id="outputs" class="annotation"></div>
     </br>
-    <div> <b>Use the buttons below or drag and scroll with your mouse to zoom and pan</b> </div>
+    <div> <b>Use the buttons below or drag and scroll with your mouse to zoom and pan. Click on background in the box below to remove highlights and details.</b> </div>
     <div class="d3-zoom-controls">
       <a data-zoom="+0.5" class="btn btn-circle"><span class="fa fa-plus"></span></a>
       <a data-zoom="-0.5" class="btn btn-circle"><span class="fa fa-minus"></span></a>
-      <a data-zoom="0" class="btn btn-circle"><span class="fa fa-crosshairs"></span></a>
+      <a data-zoom="0" class="btn btn-long">Reset Zoom</a>
+<!--      <a data-zoom="0" class="btn btn-circle"><span class="fa fa-crosshairs"></span></a>-->
     </div>
 		<div id="sankey" class="sankeybox">
 
 		</div>
+    <h4>Where is the data from?</h4>
+    <p>The data used for this tool comes from the 2013-14, 2014-15, and 2015-16 EITI reports and summary sheets. The disaggregated company payments data for 2013-14 comes from the EIT summary sheet for that year, and the disaggregated company payments data for 2014-15 and 2015-16 comes from Annex 18 of those years' reports. The data for payments from companies not included in the EITI roconciliation scope come from Section 6.2 of each year's EITI report. Note that the reconciliation scope was reduced from from 10 billion MMK in 2013-14 to 750 million MMK in 2014-15 and 2015-16, resulting in many more companies included in those years.</p>
 
 		<script>
 		var zoom = {};
@@ -350,6 +400,8 @@
           nodeWidth = 60,
           nodePadding = 20,
           defaultFlow = "Summary";
+    
+    var clickedOnNode = false;
 		
       
     var datasets = {
@@ -385,9 +437,17 @@
       ],
       "2013-14 EITI Report": [
         {
-          "file": "sankey_data_2013-14.json",
+          "file": "sankey_data_2013-14_summary.json",
           "type": "Summary",
+          "height": 400
+        },{
+          "file": "sankey_data_2013-14_companies.json",
+          "type": "Transfers from Companies",
           "height": 800
+        },{
+          "file": "sankey_data_2013-14_govt.json",
+          "type": "Inter-government Transfers",
+          "height": 400
         }
       ]
     }
@@ -436,15 +496,23 @@
         
         optionFl.addEventListener('click', function() {
           for (i = 0; i< flowSelect.childNodes.length; i++) {
-            flowSelect.childNodes[i].setAttribute('style', 'background-color: white;');
+//            flowSelect.childNodes[i].setAttribute('style', 'background-color: white;');
+//            flowSelect.childNodes[i].style.backgroundColor = "white";
+            flowSelect.childNodes[i].setAttribute('class', "flowTypeButton");
+            
           }
           console.log(this.value);
-          this.setAttribute('style', 'background-color: #00A86B;');
+//          this.setAttribute('style', 'background-color: #00A86B;');
+//          this.style.backgroundColor = "#00A86B";
+          this.setAttribute('class', "selected");
           updateData(datasetSelect.options[datasetSelect.selectedIndex].text,this.value);
         }, false);
         
         if (sankeyDataset[sFli].type == type) optionFl
-          .setAttribute('style', 'background-color: #00A86B;');
+//          .setAttribute('style', 'background-color: #00A86B;');
+//          .style.backgroundColor = "#00A86B";
+            .setAttribute('class', "selected");
+
         
         flowSelect.appendChild(optionFl);
         
@@ -597,10 +665,10 @@
 			  if (toplistFrom.length > 0) {
           html+= '<tr><td><h2>Input:</h2></td><td></td></tr>'
           html += '<tr>'+
-              '<td class="col-left"><strong>Total Inputs</strong></td>'+
-              '<td class="money-value" align="right"><strong>'+
+              '<td class="col-left">Total Inputs</td>'+
+              '<td class="money-value" align="right">'+
               formatAmount(toplistFrom.reduce(function(total, num) {return total + num.val;},0))+
-            '</strong></td>'+'</tr>';
+            '</td>'+'</tr>';
           for (i in toplistFrom) {
             html += '<tr>'+
               '<td class="col-left">'+toplistFrom[i].label+'</td>'+
@@ -612,10 +680,10 @@
 			  if (toplistTo.length > 0) {
 				  html+= '<tr><td><h2>Output:</h2></td><td></td></tr>'
           html += '<tr>'+
-              '<td class="col-left"><strong>Total Outputs</strong></td>'+
-              '<td class="money-value" align="right"><strong>'+
+              '<td class="col-left">Total Outputs</td>'+
+              '<td class="money-value" align="right">'+
               formatAmount(toplistTo.reduce(function(total, num) {return total + num.val;},0))+
-            '</strong></td>'+'</tr>';
+            '</td>'+'</tr>';
           for (i in toplistTo) {
             html += '<tr>'+
               '<td class="col-left">'+toplistTo[i].label+'</td>'+
@@ -685,7 +753,7 @@
       }
       
       function showAnnotation(d) {
-        console.log(d);
+//        console.log(d);
         
         var title = document.getElementById("node-title");
         var inputsElement = document.getElementById("inputs");
@@ -700,6 +768,9 @@
           outputsElement.innerHTML = "";
           
           d3.selectAll(".annotation").style("border","none");
+          
+          clickedOnNode = false;
+          unhighlightNodeLinks();
         } else {
           title.innerHTML = "<h4>" + d.name + "</h4>";
           inputsElement.innerHTML = '<b>Inputs:</b></br>';
@@ -734,7 +805,7 @@
           }
         } else {
           html += '<tr>'+
-              '<td class="col-left annotation-cell"> N/A </td>' +
+              '<td class="col-left annotation-cell"> None </td>' +
             '</tr>';
         }
         
@@ -769,10 +840,16 @@
 			.attr("transform", "translate(" + (margin.left) + "," + margin.top + ")");
 
     d3.select("#sankey")
+      .on("touchstart", nozoom)
+      .on("touchmove", nozoom)
       .on("click", function() {
-        console.log('svg');
+        if (d3.event.defaultPrevented) return;
         showAnnotation();
-      })  
+      });
+      
+    function nozoom() {
+      d3.event.preventDefault();
+    }
       
 		var sankey = d3sankey()
 			.nodeWidth(nodeWidth)
@@ -792,8 +869,12 @@
 			.enter().append("path")
 			  .attr("class", "link")
 			  .attr("d", path)
+        .attr("id", function(d,i){
+          d.id = i;
+          return "link-"+i;
+        })
 //			  .style("stroke", function(d){ return d.source.color || "#00a86b"; })
-			  .style("stroke", function(d){ return d.source.color || "#333"; })
+//			  .style("stroke", function(d){ return d.source.color || "#333"; })
 			  .style("stroke-width", function(d) { return Math.max(1, d.dy); })
 			  .sort(function(a, b) { return b.dy - a.dy; })
 			  .on('mousemove', function(event) {
@@ -804,8 +885,16 @@
 					left = Math.min(left, window.innerWidth - $('.d3-tip').width() - 20)
 					return left + "px"; })
 				})
-			  .on('mouseover', tipLinks.show)
-			  .on('mouseout', tipLinks.hide);
+			  .on('mouseover', function(d) {
+          d3.select(this).style("stroke-opacity", 0.9);
+          d3.select(this).style("stroke", "#FF6E48");
+          tipLinks.show(d,this);
+        })
+			  .on('mouseout', function(d) {
+          
+          unhighlightNodeLinks();
+          tipLinks.hide();
+        });
 			  
 		  var node = svg.append("g").selectAll(".node")
 			  .data(energy.nodes)
@@ -818,15 +907,28 @@
 				tipNodes
 				  .style("top", (d3.event.pageY - $('.d3-tip-nodes').height() - 20) + "px")
 				  .style("left", function () {
-					var left = (Math.max(d3.event.pageX - nodeTooltipOffset, 10)); 
-					left = Math.min(left, window.innerWidth - $('.d3-tip').width() - 20)
-					return left + "px"; })
-				})
-			.on('mouseover', tipNodes.show)
-			.on('mouseout', tipNodes.hide)
-      .on('mousedown', function(d) { 
-        showAnnotation(d);})
-//        d3.event.stopPropagation();})
+            var left = (Math.max(d3.event.pageX - nodeTooltipOffset, 10)); 
+            left = Math.min(left, window.innerWidth - $('.d3-tip').width() - 20)
+            return left + "px"; })
+        })
+			.on('mouseover', function(d,i) {
+//        d3.select(this).style("opacity", "0.7");
+        
+        highlightNodeLinks(this,d,i);
+        tipNodes.show(d,this);
+       })
+			.on('mouseout', function(d) {
+//        d3.select(this).style("opacity", "1.0");
+//        d3.select(this).selectAll('polygon').style("stroke", "none");
+        tipNodes.hide();
+        unhighlightNodeLinks();
+      })
+      .on('mousedown', function(d,i) {
+        clickedOnNode = {thisClicked: this, d: d, i: i};
+        showAnnotation(d);
+        unhighlightNodeLinks();
+        highlightNodeLinks(this,d,i);
+      })
 			.call(d3.behavior.drag()
 			  .origin(function(d) { return d; })
 			  .on("dragstart", function() { 
@@ -863,31 +965,17 @@
         })
 			  .style("fill", function(d) {
 				  if (d.type != "entity") 
-            return "#5B8266";
+//            return "#5B8266";
 //            return "#FFCC00";
+//            return "#00e691";
 //            return "#FBEC78";
 //					return d.color = color(d.name.replace(/ .*/, "")); //get new color if node.color is null
 //				  return "#FF6E48";
+          return "#00a86b";
           else return "#00a86b";
 			  })
-			  .style("stroke", function(d) { return d3.rgb(d.color).darker(2); });
+        
 
-//		  node.append("text")
-//			  .attr("class","nodeValue")
-//			  .text(function(d) { 
-////          return d.name + "\n" + format(d.value); 
-//          return ""; 
-//        });
-//
-//		  node.selectAll("text.nodeValue")
-//			  .attr("x", sankey.nodeWidth())
-//			  .attr("y", function (d) { return (d.y + 10) })
-//			  .text(function (d) { 
-////          return formatNumber(d.value); 
-//          return ""; 
-//        })
-//			  .attr("dy", 5)
-//			  .attr("text-anchor", "middle");
 
       
 		  node.append("text")
@@ -947,12 +1035,79 @@
                 (d.y = Math.max(0, Math.min(height*2 - d.dy, d3.event.y))) + ")");
 				sankey.relayout();
 				link.attr("d", path);
+        
 			};
 
 			fitZoom();
 		}
 
 
+    
+  function highlightNodeLinks(thisClicked,node,i){
+    d3.select(thisClicked).selectAll('polygon').style("stroke-width","4");
+    d3.select(thisClicked).selectAll('polygon').style("stroke", "#000");
+        
+    
+//    console.log(thisClicked);
+    var remainingNodes=[],
+        nextNodes=[];
+
+    var strokeOpacity = 0.9;
+//    if( d3.select(thisClicked).attr("data-clicked") == "1" ){
+//      d3.select(thisClicked).attr("data-clicked","0");
+//      stroke_opacity = 0.2;
+//    }else{
+      d3.select(thisClicked).attr("data-clicked","1");
+      stroke_opacity = 0.9;
+//    }
+
+    var traverse = [{
+                      linkType : "sourceLinks",
+                      nodeType : "target"
+                    },{
+                      linkType : "targetLinks",
+                      nodeType : "source"
+                    }];
+
+    traverse.forEach(function(step){
+      node[step.linkType].forEach(function(link) {
+        remainingNodes.push(link[step.nodeType]);
+        highlightLink(link.id, stroke_opacity);
+      });
+
+      while (remainingNodes.length) {
+        nextNodes = [];
+        remainingNodes.forEach(function(node) {
+          node[step.linkType].forEach(function(link) {
+            nextNodes.push(link[step.nodeType]);
+            highlightLink(link.id, strokeOpacity);
+          });
+        });
+        remainingNodes = nextNodes;
+      }
+    });
+  }
+
+  function unhighlightNodeLinks() {
+    
+    d3.selectAll(".link").style("stroke-opacity", 0.2);
+    d3.selectAll(".link").style("stroke", "#000");
+    d3.selectAll(".node").attr("data-clicked","0");  
+    d3.selectAll(".node").selectAll('polygon').style("stroke", "none");
+
+    
+    if(clickedOnNode) {
+      highlightNodeLinks(clickedOnNode.thisClicked,
+                         clickedOnNode.d,
+                         clickedOnNode.i);
+    }
+    
+  }  
+      
+  function highlightLink(id,opacity){
+    d3.select("#link-"+id).style("stroke-opacity", opacity);
+    d3.select("#link-"+id).style("stroke", "#FF6E48");
+  }  
 
     function updateData(d,type) {
       var dataSet = getDataForSankey(d,type);
