@@ -51,6 +51,9 @@
     // Returns a tip
     tip.show = function() {
       var args = Array.prototype.slice.call(arguments)
+      
+      console.log(args);
+      
       if (args[args.length - 1] instanceof SVGElement) target = args.pop()
 
       var content = html.apply(this, args),
