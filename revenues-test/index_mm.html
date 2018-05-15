@@ -45,7 +45,8 @@
 /*			font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;*/
 			justify-content: center;
 			align-items: center;
-      font-family: "Source Sans Pro", Helvetica, sans-serif;
+      font-family: 'mm_font', Fallback, sans-serif;
+/*      font-family: "Source Sans Pro", Helvetica, sans-serif;*/
       font-weight: 300;
       font-style: normal;
       color: #666;
@@ -61,7 +62,8 @@
       
     div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, option {
       
-      font-family: "Source Sans Pro", Helvetica, sans-serif;
+/*      font-family: "Source Sans Pro", Helvetica, sans-serif;*/
+      font-family: 'mm_font', Fallback, sans-serif;
       font-weight: 300;
       font-style: normal;
       color: #666;
@@ -334,7 +336,7 @@
   /*	  left: 15px;*/
   /*	  top: 10px;*/
       display: inline;
-    font-family: "Source Sans Pro", Helvetica, sans-serif;
+/*    font-family: "Source Sans Pro", Helvetica, sans-serif;*/
     font-weight: 300;
     font-style: normal;
     }
@@ -354,7 +356,7 @@
   }
     
   .d3-zoom-controls .btn-long {
-    width: 120px;
+    width: 280px;
     align-items: center;
     padding: 0px 0;
     font-size: 18px;
@@ -374,13 +376,14 @@
     text-align: center;
     display: table-cell;
     margin-bottom: 0px;
-    font-family: "Source Sans Pro", Helvetica, sans-serif;
+/*    font-family: "Source Sans Pro", Helvetica, sans-serif;*/
     font-weight: 300;
     font-style: normal;
   }  
   
   .btn-group button {
-    font-family: "Source Sans Pro", Helvetica, sans-serif;
+/*    font-family: "Source Sans Pro", Helvetica, sans-serif;*/
+    font-family: 'mm_font', Fallback, sans-serif;
     font-weight: 300;
     font-style: normal;
 /*    color: #666;*/
@@ -439,37 +442,37 @@
 
       <div class="navbar major">
 <!--          <a class="active" href="/index.html#header">Home</a>-->
-        <a href="//openjadedata.org/index.html"><span class="icon fa-home"></a>
-        <a href="//openjadedata.org/index.html#three">Data Stories</a>
-        <a class="active" href="//openjadedata.org/tools.html">Data Tools</a>
-        <a href="//openjadedata.org/datasets.html">Datasets</a>
-        <a href="//openjadedata.org/about.html">About</a>
-        <a href="index_mm.html" class="mm">မြန်မာ</a>
+        <a href="//openjadedata.org/index_mm.html"><span class="icon fa-home"></a>
+        <a href="//openjadedata.org/index_mm.html#three">ဆောင်းပါးများ</a>
+        <a class="active"  href="//openjadedata.org/tools_mm.html"> ပုံများ </a>
+        <a href="//openjadedata.org/datasets_mm.html">ကိန်းဂဏန်းဖိုင်များ</a>
+        <a href="//openjadedata.org/about_mm.html">အကြောင်းအရာ</a>
+        <a href="index.html">English</a>
       </div>
     </br>
-    <h1>Revenue Flows Explorer</h1>
-    <p>This tool lets you explore the different revenue streams paid by jade and gemstone mining companies to various government entities, and how each revenue stream feeds into another. The tool is best viewed on a laptop or desktop computer.</p>
+    <h1>ကျောက်စိမ်းနှင့် ကျောက်မျက်ကဏ္ဍမှ ဝင်ငွေစီးဆင်းမှု လေ့လာရန်</h1></br>
+    <p>ဤပုံတွင် ကျောက်စိမ်းနှင့်ကျောက်မျက်ကုမ္ပဏီများမှ အစိုးရဌာနအသီးသီးသို့ပေးသွင်းသော ဝင်ငွေစီးဆင်းမှုများ၊  လမ်းကြောင်းအမျိုးမျိုးနှင့် ဝင်ငွေလမ်းကြောင်းတစ်ခုနှင့်တစ်ခု မည်သို့ပေါင်းစပ်သွားသည်ကို လေ့လာလာနိုင်ပါသည်။ ဤပုံကို ကွန်ပြူတာ သို့မဟုတ် လပ်တော့ပ်ဖြင့် ကြည့်ရှုရန် အသင့်လျော်ဆုံးဖြစ်ပါသည်။ </p></br>
 
   
-    <h4>Select data source: 
+    <h4>အချက်အလက်ရင်းမြစ်အား ရွေးချယ်မည် -  
       <select id="mainSelect"></select>
       <div class="btn-group" id="flowSelect"></div></h4>
-    <div id="node-title"> <h4>Click on a node (green blocks and arrowheads) to see details.</h4> </div>
+    <div id="node-title"> <h4>အသေးစိတ်ကြည့်ရန် အစိမ်းရောင်ဘလောက်များနှင့် မြားခေါင်းများကို နှိပ်ပါ။ </h4> </div>
     <div id="inputs" class="annotation"></div>
     <div id="outputs" class="annotation"></div>
     </br>
-    <div> <b>Use the buttons below or drag and scroll with your mouse to zoom and pan. Click on background in the box below to remove highlights and details.</b> </div>
+    <div> <b>အောက်ဖော်ပြခလုပ်များကို နှိပ်၍သော်လည်းကောင်း၊ ဖိဆွဲကာ မောက်(စ်) ကိုလှိမ့်၍သော်လည်းကောင်း အကျယ် ချဲ့ပြီး နေရာပြောင်းရွှေ့ ကြည့်ရှုနိုင်ပါသည်။ အောက်ဖော်ပြပါ အကွက်၏ အဖြူရောင်နောက်ခံကိုနိပ်ပြီး အရောင်များ၊ အသေးစိတ် အချက်အလက်များကို ဖယ်ရှားနိုင်ပါသည်။</b> </div>
     <div class="d3-zoom-controls">
       <a data-zoom="+0.5" class="btn btn-circle"><span class="fa fa-plus"></span></a>
       <a data-zoom="-0.5" class="btn btn-circle"><span class="fa fa-minus"></span></a>
-      <a data-zoom="0" class="btn btn-long">Reset Zoom</a>
+      <a data-zoom="0" class="btn btn-long">ပုံကို မူလအရွယ် ပြန်ထားမည်</a>
 <!--      <a data-zoom="0" class="btn btn-circle"><span class="fa fa-crosshairs"></span></a>-->
     </div>
 		<div id="sankey" class="sankeybox">
 
 		</div>
-    <h4>Where is the data from?</h4>
-    <p>The data used for this tool comes from the 2013-14, 2014-15, and 2015-16 EITI reports and summary sheets. The disaggregated company payments data for 2013-14 comes from the EITI summary sheet for that year. The disaggregated company payments data for 2014-15 and 2015-16 comes from Annex 18 of those years' reports. The data for payments from companies not included in the EITI reconciliation scope comes from Section 6.2 of each year's EITI report. Note that the threshold for reporting was reduced from MMK 10 billion in 2013-14 to MMK 750 million in 2014-15 and 2015-16, resulting in many more companies included in the reconciliation scope for those years.</p>
+    <h4>မည်သည့်အချက်အလက်များအပေါ် အခြေခံထားသနည်း။ </h4>
+    <p>ဤပုံတွင် အသုံးပြုထားသော အချက်အလက်များကို  ၂၀၁၃-၁၄၊ ၂၀၁၄-၁၅ နှင့် ၂၀၁၅-၁၆ EITI အစီခံစာများ နှင့် အကျဉ်းချုပ်တင်ပြချက်များမှာ ရရှိပါသည်။ ၂၀၁၃-၁၄ ခုနှစ်အတွင်း ကုမ္ပဏီများ၏ ငွေပေးသွင်းမှု အချက်အလက် အသေးစိတ်များကို ထိုနှစ် EITI အကျဉ်းချုပ်တင်ပြချက်မှ ရရှိပါသည်။ ၂၀၁၄-၁၅ နှင့် ၂၀၁၅-၁၆ အတွင်း ကုမ္ပဏီများ၏ ငွေပေးသွင်းမှုအသေးစိတ်အချက်အလက်များမှာ ထိုနှစ်တစ်နှစ်စီ၏ အစီရင်ခံစာ နောက်ဆက်တွဲ ၁၈ မှ ရရှိပါ သည်။  EITI အချက်အလက်ရှေ့နောက်ညီညွှတ်ရေးလေ့လာမှုတွင် မပါဝင်သော ကုမ္ပဏီများ၏ ငွေပေးသွင်းမှု အချက်အလက်များကို နှစ်တစ်နှစ်စီ၏ EITI အစီရင်ခံစာ အပိုင်း ၆.၂ မှရရှိပါသည်။ သတိပြုရန်မှာ အစီရင်ခံတင်ပြရန် အနည်းဆုံးသတ်မှတ်ထားသော ပမာဏမှာ ၂၀၁၃-၁၄ခုနှစ်တွင် ကျပ်ငွေ ၁၀ ဘီလီယံမှ ၂၀၁၄-၁၅ခုနှစ် နှင့် ၂၀၁၅-၂၀၁၆ခုနှစ်တွင် ကျပ်ငွေ သန်းပေါင်း ၇၅၀ သို့လျှော့ချလိုက်သည့်အတွက် ထိုနှစ်နောက်ပိုင်းတွင် အချက်အလက်ရှေ့ နောက်ညီညွှတ်ရေး လေ့လာမှုတွင် ကုမ္ပဏီများ အမြောက်အမြားပါဝင်လာပါသည်။ </p>
 
 		<script>
 		var zoom = {};
@@ -491,14 +494,17 @@
         {
           "file": "sankey_data_2015-16_summary.json",
           "type": "Summary",
+          "type_mm": "အကျဉ်းချုပ်",
           "height": 600
         },{
           "file": "sankey_data_2015-16_companies.json",
           "type": "Transfers from companies",
+          "type_mm": "ကုမ္မဏီများထံမှ လွှဲပြောင်းပေးသွင်းမှုများ",
           "height": 1200
         },{
           "file": "sankey_data_2015-16_govt.json",
           "type": "Inter-government transfers",
+          "type_mm": "အစိုးရဌာနအချင်းချင်း လွှဲပြောင်းပေးသွင်းမှုများ",
           "height": 600
         }
       ],
@@ -506,14 +512,17 @@
         {
           "file": "sankey_data_2014-15_summary.json",
           "type": "Summary",
+          "type_mm": "အကျဉ်းချုပ်",
           "height": 600
         },{
           "file": "sankey_data_2014-15_companies.json",
           "type": "Transfers from companies",
+          "type_mm": "ကုမ္မဏီများထံမှ လွှဲပြောင်းပေးသွင်းမှုများ",
           "height": 1500
         },{
           "file": "sankey_data_2014-15_govt.json",
           "type": "Inter-government transfers",
+          "type_mm": "အစိုးရဌာနအချင်းချင်း လွှဲပြောင်းပေးသွင်းမှုများ",
           "height": 600
         }
       ],
@@ -521,14 +530,17 @@
         {
           "file": "sankey_data_2013-14_summary.json",
           "type": "Summary",
+          "type_mm": "အကျဉ်းချုပ်",
           "height": 400
         },{
           "file": "sankey_data_2013-14_companies.json",
           "type": "Transfers from companies",
+          "type_mm": "ကုမ္မဏီများထံမှ လွှဲပြောင်းပေးသွင်းမှုများ",
           "height": 800
         },{
           "file": "sankey_data_2013-14_govt.json",
           "type": "Inter-government transfers",
+          "type_mm": "အစိုးရဌာနအချင်းချင်း လွှဲပြောင်းပေးသွင်းမှုများ",
           "height": 400
         }
       ]
@@ -574,7 +586,7 @@
         optionFl = document.createElement('button');
         optionFl.setAttribute('value', sankeyDataset[sFli].type);
         optionFl.setAttribute('class', "flowTypeButton");
-        optionFl.appendChild(document.createTextNode(sankeyDataset[sFli].type));
+        optionFl.appendChild(document.createTextNode(sankeyDataset[sFli].type_mm));
         
         optionFl.addEventListener('click', function() {
           for (i = 0; i< flowSelect.childNodes.length; i++) {
