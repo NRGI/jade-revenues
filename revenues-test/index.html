@@ -498,6 +498,24 @@
 		
       
     var datasets = {
+      
+      "2016-17 EITI Report": [
+        {
+          "file": "sankey_data_2016-17_summary.json",
+          "type": "Summary",
+          "height": 1200
+        },
+        {
+          "file": "sankey_data_2016-17_companies.json",
+          "type": "Transfers from companies",
+          "height": 2500
+        },
+        {
+          "file": "sankey_data_2016-17_govt.json",
+          "type": "Inter-government transfers",
+          "height": 600
+        }
+      ],
       "2015-16 EITI Report": [
         {
           "file": "sankey_data_2015-16_summary.json",
@@ -542,7 +560,7 @@
           "type": "Inter-government transfers",
           "height": 400
         }
-      ]
+      ],
     }
 
     var datasetNames = Object.keys(datasets);
