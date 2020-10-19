@@ -480,7 +480,12 @@
 
 		</div>
     <h4>Where is the data from?</h4>
-    <p>The data used for this tool comes from the 2013-14, 2014-15, and 2015-16 EITI reports and summary sheets. The disaggregated company payments data for 2013-14 comes from the EITI summary sheet for that year. The disaggregated company payments data for 2014-15 and 2015-16 comes from Annex 18 of those years' reports. The data for payments from companies not included in the EITI reconciliation scope comes from Section 6.2 of each year's EITI report. Note that the threshold for reporting was reduced from MMK 10 billion in 2013-14 to MMK 750 million in 2014-15 and 2015-16, resulting in many more companies included in the reconciliation scope for those years.</p>
+    <p>The data used for this tool comes from the 2013-14, 2014-15, 2015-16, 2016-17 and 2017-18 EITI reports and summary sheets. 
+      The disaggregated company payments data for 2013-14 comes from the EITI summary sheet for that year. 
+      The disaggregated company payments data for 2014-15 and 2015-16 comes from Annex 18 of those years' reports. 
+      The disaggregated company payments data for 2017-18 comes from Annex 12 of that year's report. 
+      The data for payments from companies not included in the EITI reconciliation scope comes from Section 6.2 of each year's EITI report. 
+      Note that the threshold for reporting was reduced from MMK 10 billion in 2013-14 to MMK 750 million in 2014-15 and 2015-16, resulting in many more companies included in the reconciliation scope for those years.</p>
 
 		<script>
 		var zoom = {};
@@ -498,7 +503,23 @@
 		
       
     var datasets = {
-      
+      "2017-18 EITI Report": [
+        {
+          "file": "sankey_data_2017-18_summary.json",
+          "type": "Summary",
+          "height": 1200
+        },
+        {
+          "file": "sankey_data_2017-18_companies.json",
+          "type": "Transfers from companies",
+          "height": 4500
+        },
+        {
+          "file": "sankey_data_2017-18_govt.json",
+          "type": "Inter-government transfers",
+          "height": 600
+        }
+      ],
       "2016-17 EITI Report": [
         {
           "file": "sankey_data_2016-17_summary.json",
@@ -640,7 +661,7 @@
             if(d.type == type) return true;})[0];
     }
 
-    updateData("2015-16 EITI Report",defaultFlow);  
+    updateData("2017-18 EITI Report",defaultFlow);  
     
     datasetSelect.onchange = function() {
       console.log(datasetSelect.options[datasetSelect.selectedIndex].text);

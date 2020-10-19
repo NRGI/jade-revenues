@@ -501,6 +501,26 @@
 		
       
     var datasets = {
+      "2017-18 EITI Report": [
+        {
+          "file": "sankey_data_2017-18_summary.json",
+          "type": "Summary",
+          "type_mm": "အကျဉ်းချုပ်",
+          "height": 1200
+        },
+        {
+          "file": "sankey_data_2017-18_companies.json",
+          "type": "Transfers from companies",
+          "type_mm": "ကုမ္မဏီများထံမှ လွှဲပြောင်းပေးသွင်းမှုများ",
+          "height": 4500
+        },
+        {
+          "file": "sankey_data_2017-18_govt.json",
+          "type": "Inter-government transfers",
+          "type_mm": "အစိုးရဌာနအချင်းချင်း လွှဲပြောင်းပေးသွင်းမှုများ",
+          "height": 600
+        }
+      ],
       "2016-17 EITI Report": [
         {
           "file": "sankey_data_2016-17_summary.json",
@@ -654,7 +674,7 @@
             if(d.type == type) return true;})[0];
     }
 
-    updateData("2015-16 EITI Report",defaultFlow);  
+    updateData("2017-18 EITI Report",defaultFlow);  
     
     datasetSelect.onchange = function() {
       console.log(datasetSelect.options[datasetSelect.selectedIndex].text);
