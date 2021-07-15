@@ -1,4 +1,4 @@
-FROM nginx:1.13.9
+FROM public.ecr.aws/nrgi/base-image:nginx-1.13.9
 
 RUN apt-get update \
     && apt-get install gettext-base \
